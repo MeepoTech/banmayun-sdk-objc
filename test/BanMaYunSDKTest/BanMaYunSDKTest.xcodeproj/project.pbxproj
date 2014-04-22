@@ -21,6 +21,38 @@
 		CB5369111904C4890045F430 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB5368F31904C4890045F430 /* UIKit.framework */; };
 		CB5369191904C4890045F430 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CB5369171904C4890045F430 /* InfoPlist.strings */; };
 		CB53691B1904C4890045F430 /* BanMaYunSDKTestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CB53691A1904C4890045F430 /* BanMaYunSDKTestTests.m */; };
+		CB536A671904EFC70045F430 /* BMYRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536A5E1904EFC70045F430 /* BMYRequest.m */; };
+		CB536A681904EFC70045F430 /* BMYRestClient.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536A601904EFC70045F430 /* BMYRestClient.m */; };
+		CB536A691904EFC70045F430 /* BMYSession.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536A621904EFC70045F430 /* BMYSession.m */; };
+		CB536A6A1904EFC70045F430 /* BMYURLRequestParameter.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536A641904EFC70045F430 /* BMYURLRequestParameter.m */; };
+		CB536A6B1904EFC70045F430 /* NSString+URLEscapingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536A661904EFC70045F430 /* NSString+URLEscapingAdditions.m */; };
+		CB536A901904EFD30045F430 /* BMYChunkedUpload.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536A6D1904EFD30045F430 /* BMYChunkedUpload.m */; };
+		CB536A911904EFD30045F430 /* BMYComment.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536A6F1904EFD30045F430 /* BMYComment.m */; };
+		CB536A921904EFD30045F430 /* BMYGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536A711904EFD30045F430 /* BMYGroup.m */; };
+		CB536A931904EFD30045F430 /* BMYGroupType.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536A731904EFD30045F430 /* BMYGroupType.m */; };
+		CB536A941904EFD30045F430 /* BMYLink.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536A751904EFD30045F430 /* BMYLink.m */; };
+		CB536A951904EFD30045F430 /* BMYMetadata.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536A771904EFD30045F430 /* BMYMetadata.m */; };
+		CB536A961904EFD30045F430 /* BMYPermission.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536A791904EFD30045F430 /* BMYPermission.m */; };
+		CB536A971904EFD30045F430 /* BMYRelation.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536A7B1904EFD30045F430 /* BMYRelation.m */; };
+		CB536A981904EFD30045F430 /* BMYRelationRole.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536A7D1904EFD30045F430 /* BMYRelationRole.m */; };
+		CB536A991904EFD30045F430 /* BMYResultList.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536A7F1904EFD30045F430 /* BMYResultList.m */; };
+		CB536A9A1904EFD30045F430 /* BMYRevision.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536A811904EFD30045F430 /* BMYRevision.m */; };
+		CB536A9B1904EFD30045F430 /* BMYRoot.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536A831904EFD30045F430 /* BMYRoot.m */; };
+		CB536A9C1904EFD30045F430 /* BMYShare.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536A851904EFD30045F430 /* BMYShare.m */; };
+		CB536A9D1904EFD30045F430 /* BMYSize.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536A871904EFD30045F430 /* BMYSize.m */; };
+		CB536A9E1904EFD30045F430 /* BMYTime.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536A891904EFD30045F430 /* BMYTime.m */; };
+		CB536A9F1904EFD30045F430 /* BMYTrash.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536A8B1904EFD30045F430 /* BMYTrash.m */; };
+		CB536AA01904EFD30045F430 /* BMYUser.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536A8D1904EFD30045F430 /* BMYUser.m */; };
+		CB536AA11904EFD30045F430 /* BMYUserRole.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536A8F1904EFD30045F430 /* BMYUserRole.m */; };
+		CB536AB11904EFF00045F430 /* BMYJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536AA51904EFF00045F430 /* BMYJSON.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		CB536AB21904EFF00045F430 /* BMYJsonBase.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536AA71904EFF00045F430 /* BMYJsonBase.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		CB536AB31904EFF00045F430 /* BMYJsonParser.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536AA91904EFF00045F430 /* BMYJsonParser.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		CB536AB41904EFF00045F430 /* BMYJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536AAB1904EFF00045F430 /* BMYJsonWriter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		CB536AB51904EFF00045F430 /* NSObject+BMYJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536AAE1904EFF00045F430 /* NSObject+BMYJSON.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		CB536AB61904EFF00045F430 /* NSString+BMYJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536AB01904EFF00045F430 /* NSString+BMYJSON.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		CB536ABA1904F0040045F430 /* DBBase64Transcoder.c in Sources */ = {isa = PBXBuildFile; fileRef = CB536AB81904F0040045F430 /* DBBase64Transcoder.c */; };
+		CB536ABF1904F00D0045F430 /* BMYError.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536ABC1904F00D0045F430 /* BMYError.m */; };
+		CB536AC01904F00D0045F430 /* BMYLog.m in Sources */ = {isa = PBXBuildFile; fileRef = CB536ABE1904F00D0045F430 /* BMYLog.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +85,71 @@
 		CB5369161904C4890045F430 /* BanMaYunSDKTestTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "BanMaYunSDKTestTests-Info.plist"; sourceTree = "<group>"; };
 		CB5369181904C4890045F430 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		CB53691A1904C4890045F430 /* BanMaYunSDKTestTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BanMaYunSDKTestTests.m; sourceTree = "<group>"; };
+		CB536A5D1904EFC70045F430 /* BMYRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BMYRequest.h; path = ../../src/Connect/BMYRequest.h; sourceTree = "<group>"; };
+		CB536A5E1904EFC70045F430 /* BMYRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BMYRequest.m; path = ../../src/Connect/BMYRequest.m; sourceTree = "<group>"; };
+		CB536A5F1904EFC70045F430 /* BMYRestClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BMYRestClient.h; path = ../../src/Connect/BMYRestClient.h; sourceTree = "<group>"; };
+		CB536A601904EFC70045F430 /* BMYRestClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BMYRestClient.m; path = ../../src/Connect/BMYRestClient.m; sourceTree = "<group>"; };
+		CB536A611904EFC70045F430 /* BMYSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BMYSession.h; path = ../../src/Connect/BMYSession.h; sourceTree = "<group>"; };
+		CB536A621904EFC70045F430 /* BMYSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BMYSession.m; path = ../../src/Connect/BMYSession.m; sourceTree = "<group>"; };
+		CB536A631904EFC70045F430 /* BMYURLRequestParameter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BMYURLRequestParameter.h; path = ../../src/Connect/BMYURLRequestParameter.h; sourceTree = "<group>"; };
+		CB536A641904EFC70045F430 /* BMYURLRequestParameter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BMYURLRequestParameter.m; path = ../../src/Connect/BMYURLRequestParameter.m; sourceTree = "<group>"; };
+		CB536A651904EFC70045F430 /* NSString+URLEscapingAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+URLEscapingAdditions.h"; path = "../../src/Connect/NSString+URLEscapingAdditions.h"; sourceTree = "<group>"; };
+		CB536A661904EFC70045F430 /* NSString+URLEscapingAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+URLEscapingAdditions.m"; path = "../../src/Connect/NSString+URLEscapingAdditions.m"; sourceTree = "<group>"; };
+		CB536A6C1904EFD30045F430 /* BMYChunkedUpload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BMYChunkedUpload.h; path = ../../src/Info/BMYChunkedUpload.h; sourceTree = "<group>"; };
+		CB536A6D1904EFD30045F430 /* BMYChunkedUpload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BMYChunkedUpload.m; path = ../../src/Info/BMYChunkedUpload.m; sourceTree = "<group>"; };
+		CB536A6E1904EFD30045F430 /* BMYComment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BMYComment.h; path = ../../src/Info/BMYComment.h; sourceTree = "<group>"; };
+		CB536A6F1904EFD30045F430 /* BMYComment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BMYComment.m; path = ../../src/Info/BMYComment.m; sourceTree = "<group>"; };
+		CB536A701904EFD30045F430 /* BMYGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BMYGroup.h; path = ../../src/Info/BMYGroup.h; sourceTree = "<group>"; };
+		CB536A711904EFD30045F430 /* BMYGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BMYGroup.m; path = ../../src/Info/BMYGroup.m; sourceTree = "<group>"; };
+		CB536A721904EFD30045F430 /* BMYGroupType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BMYGroupType.h; path = ../../src/Info/BMYGroupType.h; sourceTree = "<group>"; };
+		CB536A731904EFD30045F430 /* BMYGroupType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BMYGroupType.m; path = ../../src/Info/BMYGroupType.m; sourceTree = "<group>"; };
+		CB536A741904EFD30045F430 /* BMYLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BMYLink.h; path = ../../src/Info/BMYLink.h; sourceTree = "<group>"; };
+		CB536A751904EFD30045F430 /* BMYLink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BMYLink.m; path = ../../src/Info/BMYLink.m; sourceTree = "<group>"; };
+		CB536A761904EFD30045F430 /* BMYMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BMYMetadata.h; path = ../../src/Info/BMYMetadata.h; sourceTree = "<group>"; };
+		CB536A771904EFD30045F430 /* BMYMetadata.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BMYMetadata.m; path = ../../src/Info/BMYMetadata.m; sourceTree = "<group>"; };
+		CB536A781904EFD30045F430 /* BMYPermission.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BMYPermission.h; path = ../../src/Info/BMYPermission.h; sourceTree = "<group>"; };
+		CB536A791904EFD30045F430 /* BMYPermission.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BMYPermission.m; path = ../../src/Info/BMYPermission.m; sourceTree = "<group>"; };
+		CB536A7A1904EFD30045F430 /* BMYRelation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BMYRelation.h; path = ../../src/Info/BMYRelation.h; sourceTree = "<group>"; };
+		CB536A7B1904EFD30045F430 /* BMYRelation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BMYRelation.m; path = ../../src/Info/BMYRelation.m; sourceTree = "<group>"; };
+		CB536A7C1904EFD30045F430 /* BMYRelationRole.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BMYRelationRole.h; path = ../../src/Info/BMYRelationRole.h; sourceTree = "<group>"; };
+		CB536A7D1904EFD30045F430 /* BMYRelationRole.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BMYRelationRole.m; path = ../../src/Info/BMYRelationRole.m; sourceTree = "<group>"; };
+		CB536A7E1904EFD30045F430 /* BMYResultList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BMYResultList.h; path = ../../src/Info/BMYResultList.h; sourceTree = "<group>"; };
+		CB536A7F1904EFD30045F430 /* BMYResultList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BMYResultList.m; path = ../../src/Info/BMYResultList.m; sourceTree = "<group>"; };
+		CB536A801904EFD30045F430 /* BMYRevision.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BMYRevision.h; path = ../../src/Info/BMYRevision.h; sourceTree = "<group>"; };
+		CB536A811904EFD30045F430 /* BMYRevision.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BMYRevision.m; path = ../../src/Info/BMYRevision.m; sourceTree = "<group>"; };
+		CB536A821904EFD30045F430 /* BMYRoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BMYRoot.h; path = ../../src/Info/BMYRoot.h; sourceTree = "<group>"; };
+		CB536A831904EFD30045F430 /* BMYRoot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BMYRoot.m; path = ../../src/Info/BMYRoot.m; sourceTree = "<group>"; };
+		CB536A841904EFD30045F430 /* BMYShare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BMYShare.h; path = ../../src/Info/BMYShare.h; sourceTree = "<group>"; };
+		CB536A851904EFD30045F430 /* BMYShare.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BMYShare.m; path = ../../src/Info/BMYShare.m; sourceTree = "<group>"; };
+		CB536A861904EFD30045F430 /* BMYSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BMYSize.h; path = ../../src/Info/BMYSize.h; sourceTree = "<group>"; };
+		CB536A871904EFD30045F430 /* BMYSize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BMYSize.m; path = ../../src/Info/BMYSize.m; sourceTree = "<group>"; };
+		CB536A881904EFD30045F430 /* BMYTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BMYTime.h; path = ../../src/Info/BMYTime.h; sourceTree = "<group>"; };
+		CB536A891904EFD30045F430 /* BMYTime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BMYTime.m; path = ../../src/Info/BMYTime.m; sourceTree = "<group>"; };
+		CB536A8A1904EFD30045F430 /* BMYTrash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BMYTrash.h; path = ../../src/Info/BMYTrash.h; sourceTree = "<group>"; };
+		CB536A8B1904EFD30045F430 /* BMYTrash.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BMYTrash.m; path = ../../src/Info/BMYTrash.m; sourceTree = "<group>"; };
+		CB536A8C1904EFD30045F430 /* BMYUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BMYUser.h; path = ../../src/Info/BMYUser.h; sourceTree = "<group>"; };
+		CB536A8D1904EFD30045F430 /* BMYUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BMYUser.m; path = ../../src/Info/BMYUser.m; sourceTree = "<group>"; };
+		CB536A8E1904EFD30045F430 /* BMYUserRole.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BMYUserRole.h; path = ../../src/Info/BMYUserRole.h; sourceTree = "<group>"; };
+		CB536A8F1904EFD30045F430 /* BMYUserRole.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BMYUserRole.m; path = ../../src/Info/BMYUserRole.m; sourceTree = "<group>"; };
+		CB536AA41904EFF00045F430 /* BMYJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BMYJSON.h; path = ../../src/JSON/BMYJSON.h; sourceTree = "<group>"; };
+		CB536AA51904EFF00045F430 /* BMYJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BMYJSON.m; path = ../../src/JSON/BMYJSON.m; sourceTree = "<group>"; };
+		CB536AA61904EFF00045F430 /* BMYJsonBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BMYJsonBase.h; path = ../../src/JSON/BMYJsonBase.h; sourceTree = "<group>"; };
+		CB536AA71904EFF00045F430 /* BMYJsonBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BMYJsonBase.m; path = ../../src/JSON/BMYJsonBase.m; sourceTree = "<group>"; };
+		CB536AA81904EFF00045F430 /* BMYJsonParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BMYJsonParser.h; path = ../../src/JSON/BMYJsonParser.h; sourceTree = "<group>"; };
+		CB536AA91904EFF00045F430 /* BMYJsonParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BMYJsonParser.m; path = ../../src/JSON/BMYJsonParser.m; sourceTree = "<group>"; };
+		CB536AAA1904EFF00045F430 /* BMYJsonWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BMYJsonWriter.h; path = ../../src/JSON/BMYJsonWriter.h; sourceTree = "<group>"; };
+		CB536AAB1904EFF00045F430 /* BMYJsonWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BMYJsonWriter.m; path = ../../src/JSON/BMYJsonWriter.m; sourceTree = "<group>"; };
+		CB536AAC1904EFF00045F430 /* JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSON.h; path = ../../src/JSON/JSON.h; sourceTree = "<group>"; };
+		CB536AAD1904EFF00045F430 /* NSObject+BMYJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSObject+BMYJSON.h"; path = "../../src/JSON/NSObject+BMYJSON.h"; sourceTree = "<group>"; };
+		CB536AAE1904EFF00045F430 /* NSObject+BMYJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSObject+BMYJSON.m"; path = "../../src/JSON/NSObject+BMYJSON.m"; sourceTree = "<group>"; };
+		CB536AAF1904EFF00045F430 /* NSString+BMYJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+BMYJSON.h"; path = "../../src/JSON/NSString+BMYJSON.h"; sourceTree = "<group>"; };
+		CB536AB01904EFF00045F430 /* NSString+BMYJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+BMYJSON.m"; path = "../../src/JSON/NSString+BMYJSON.m"; sourceTree = "<group>"; };
+		CB536AB81904F0040045F430 /* DBBase64Transcoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = DBBase64Transcoder.c; path = ../../src/Other/Crypto/DBBase64Transcoder.c; sourceTree = "<group>"; };
+		CB536AB91904F0040045F430 /* DBBase64Transcoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DBBase64Transcoder.h; path = ../../src/Other/Crypto/DBBase64Transcoder.h; sourceTree = "<group>"; };
+		CB536ABB1904F00D0045F430 /* BMYError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BMYError.h; path = ../../src/Other/BMYError.h; sourceTree = "<group>"; };
+		CB536ABC1904F00D0045F430 /* BMYError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BMYError.m; path = ../../src/Other/BMYError.m; sourceTree = "<group>"; };
+		CB536ABD1904F00D0045F430 /* BMYLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BMYLog.h; path = ../../src/Other/BMYLog.h; sourceTree = "<group>"; };
+		CB536ABE1904F00D0045F430 /* BMYLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BMYLog.m; path = ../../src/Other/BMYLog.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,8 +179,8 @@
 		CB5368E31904C4890045F430 = {
 			isa = PBXGroup;
 			children = (
-				CB5368F51904C4890045F430 /* BanMaYunSDKTest */,
-				CB5369141904C4890045F430 /* BanMaYunSDKTestTests */,
+				CB536A571904EF720045F430 /* src */,
+				CB536A581904EF790045F430 /* test */,
 				CB5368EE1904C4890045F430 /* Frameworks */,
 				CB5368ED1904C4890045F430 /* Products */,
 			);
@@ -150,6 +247,127 @@
 				CB5369171904C4890045F430 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		CB536A571904EF720045F430 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				CB536A5C1904EFA80045F430 /* Connect */,
+				CB536A5B1904EFA40045F430 /* Info */,
+				CB536A5A1904EF9E0045F430 /* JSON */,
+				CB536A591904EF950045F430 /* Other */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
+		CB536A581904EF790045F430 /* test */ = {
+			isa = PBXGroup;
+			children = (
+				CB5368F51904C4890045F430 /* BanMaYunSDKTest */,
+				CB5369141904C4890045F430 /* BanMaYunSDKTestTests */,
+			);
+			name = test;
+			sourceTree = "<group>";
+		};
+		CB536A591904EF950045F430 /* Other */ = {
+			isa = PBXGroup;
+			children = (
+				CB536ABB1904F00D0045F430 /* BMYError.h */,
+				CB536ABC1904F00D0045F430 /* BMYError.m */,
+				CB536ABD1904F00D0045F430 /* BMYLog.h */,
+				CB536ABE1904F00D0045F430 /* BMYLog.m */,
+				CB536AB71904EFF60045F430 /* Crypto */,
+			);
+			name = Other;
+			sourceTree = "<group>";
+		};
+		CB536A5A1904EF9E0045F430 /* JSON */ = {
+			isa = PBXGroup;
+			children = (
+				CB536AA41904EFF00045F430 /* BMYJSON.h */,
+				CB536AA51904EFF00045F430 /* BMYJSON.m */,
+				CB536AA61904EFF00045F430 /* BMYJsonBase.h */,
+				CB536AA71904EFF00045F430 /* BMYJsonBase.m */,
+				CB536AA81904EFF00045F430 /* BMYJsonParser.h */,
+				CB536AA91904EFF00045F430 /* BMYJsonParser.m */,
+				CB536AAA1904EFF00045F430 /* BMYJsonWriter.h */,
+				CB536AAB1904EFF00045F430 /* BMYJsonWriter.m */,
+				CB536AAC1904EFF00045F430 /* JSON.h */,
+				CB536AAD1904EFF00045F430 /* NSObject+BMYJSON.h */,
+				CB536AAE1904EFF00045F430 /* NSObject+BMYJSON.m */,
+				CB536AAF1904EFF00045F430 /* NSString+BMYJSON.h */,
+				CB536AB01904EFF00045F430 /* NSString+BMYJSON.m */,
+			);
+			name = JSON;
+			sourceTree = "<group>";
+		};
+		CB536A5B1904EFA40045F430 /* Info */ = {
+			isa = PBXGroup;
+			children = (
+				CB536A6C1904EFD30045F430 /* BMYChunkedUpload.h */,
+				CB536A6D1904EFD30045F430 /* BMYChunkedUpload.m */,
+				CB536A6E1904EFD30045F430 /* BMYComment.h */,
+				CB536A6F1904EFD30045F430 /* BMYComment.m */,
+				CB536A701904EFD30045F430 /* BMYGroup.h */,
+				CB536A711904EFD30045F430 /* BMYGroup.m */,
+				CB536A721904EFD30045F430 /* BMYGroupType.h */,
+				CB536A731904EFD30045F430 /* BMYGroupType.m */,
+				CB536A741904EFD30045F430 /* BMYLink.h */,
+				CB536A751904EFD30045F430 /* BMYLink.m */,
+				CB536A761904EFD30045F430 /* BMYMetadata.h */,
+				CB536A771904EFD30045F430 /* BMYMetadata.m */,
+				CB536A781904EFD30045F430 /* BMYPermission.h */,
+				CB536A791904EFD30045F430 /* BMYPermission.m */,
+				CB536A7A1904EFD30045F430 /* BMYRelation.h */,
+				CB536A7B1904EFD30045F430 /* BMYRelation.m */,
+				CB536A7C1904EFD30045F430 /* BMYRelationRole.h */,
+				CB536A7D1904EFD30045F430 /* BMYRelationRole.m */,
+				CB536A7E1904EFD30045F430 /* BMYResultList.h */,
+				CB536A7F1904EFD30045F430 /* BMYResultList.m */,
+				CB536A801904EFD30045F430 /* BMYRevision.h */,
+				CB536A811904EFD30045F430 /* BMYRevision.m */,
+				CB536A821904EFD30045F430 /* BMYRoot.h */,
+				CB536A831904EFD30045F430 /* BMYRoot.m */,
+				CB536A841904EFD30045F430 /* BMYShare.h */,
+				CB536A851904EFD30045F430 /* BMYShare.m */,
+				CB536A861904EFD30045F430 /* BMYSize.h */,
+				CB536A871904EFD30045F430 /* BMYSize.m */,
+				CB536A881904EFD30045F430 /* BMYTime.h */,
+				CB536A891904EFD30045F430 /* BMYTime.m */,
+				CB536A8A1904EFD30045F430 /* BMYTrash.h */,
+				CB536A8B1904EFD30045F430 /* BMYTrash.m */,
+				CB536A8C1904EFD30045F430 /* BMYUser.h */,
+				CB536A8D1904EFD30045F430 /* BMYUser.m */,
+				CB536A8E1904EFD30045F430 /* BMYUserRole.h */,
+				CB536A8F1904EFD30045F430 /* BMYUserRole.m */,
+			);
+			name = Info;
+			sourceTree = "<group>";
+		};
+		CB536A5C1904EFA80045F430 /* Connect */ = {
+			isa = PBXGroup;
+			children = (
+				CB536A5D1904EFC70045F430 /* BMYRequest.h */,
+				CB536A5E1904EFC70045F430 /* BMYRequest.m */,
+				CB536A5F1904EFC70045F430 /* BMYRestClient.h */,
+				CB536A601904EFC70045F430 /* BMYRestClient.m */,
+				CB536A611904EFC70045F430 /* BMYSession.h */,
+				CB536A621904EFC70045F430 /* BMYSession.m */,
+				CB536A631904EFC70045F430 /* BMYURLRequestParameter.h */,
+				CB536A641904EFC70045F430 /* BMYURLRequestParameter.m */,
+				CB536A651904EFC70045F430 /* NSString+URLEscapingAdditions.h */,
+				CB536A661904EFC70045F430 /* NSString+URLEscapingAdditions.m */,
+			);
+			name = Connect;
+			sourceTree = "<group>";
+		};
+		CB536AB71904EFF60045F430 /* Crypto */ = {
+			isa = PBXGroup;
+			children = (
+				CB536AB81904F0040045F430 /* DBBase64Transcoder.c */,
+				CB536AB91904F0040045F430 /* DBBase64Transcoder.h */,
+			);
+			name = Crypto;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -249,9 +467,41 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CB536A961904EFD30045F430 /* BMYPermission.m in Sources */,
+				CB536AB31904EFF00045F430 /* BMYJsonParser.m in Sources */,
+				CB536AA11904EFD30045F430 /* BMYUserRole.m in Sources */,
+				CB536AB51904EFF00045F430 /* NSObject+BMYJSON.m in Sources */,
+				CB536A671904EFC70045F430 /* BMYRequest.m in Sources */,
+				CB536A6B1904EFC70045F430 /* NSString+URLEscapingAdditions.m in Sources */,
 				CB5369061904C4890045F430 /* ViewController.m in Sources */,
+				CB536ABA1904F0040045F430 /* DBBase64Transcoder.c in Sources */,
 				CB5369001904C4890045F430 /* AppDelegate.m in Sources */,
+				CB536A9D1904EFD30045F430 /* BMYSize.m in Sources */,
+				CB536A941904EFD30045F430 /* BMYLink.m in Sources */,
+				CB536AB41904EFF00045F430 /* BMYJsonWriter.m in Sources */,
+				CB536A691904EFC70045F430 /* BMYSession.m in Sources */,
+				CB536ABF1904F00D0045F430 /* BMYError.m in Sources */,
+				CB536A991904EFD30045F430 /* BMYResultList.m in Sources */,
+				CB536A9A1904EFD30045F430 /* BMYRevision.m in Sources */,
+				CB536A921904EFD30045F430 /* BMYGroup.m in Sources */,
 				CB5368FC1904C4890045F430 /* main.m in Sources */,
+				CB536A681904EFC70045F430 /* BMYRestClient.m in Sources */,
+				CB536A931904EFD30045F430 /* BMYGroupType.m in Sources */,
+				CB536AB61904EFF00045F430 /* NSString+BMYJSON.m in Sources */,
+				CB536A9C1904EFD30045F430 /* BMYShare.m in Sources */,
+				CB536A9F1904EFD30045F430 /* BMYTrash.m in Sources */,
+				CB536AB21904EFF00045F430 /* BMYJsonBase.m in Sources */,
+				CB536A901904EFD30045F430 /* BMYChunkedUpload.m in Sources */,
+				CB536A951904EFD30045F430 /* BMYMetadata.m in Sources */,
+				CB536AC01904F00D0045F430 /* BMYLog.m in Sources */,
+				CB536A9E1904EFD30045F430 /* BMYTime.m in Sources */,
+				CB536AA01904EFD30045F430 /* BMYUser.m in Sources */,
+				CB536A911904EFD30045F430 /* BMYComment.m in Sources */,
+				CB536A9B1904EFD30045F430 /* BMYRoot.m in Sources */,
+				CB536A971904EFD30045F430 /* BMYRelation.m in Sources */,
+				CB536A981904EFD30045F430 /* BMYRelationRole.m in Sources */,
+				CB536AB11904EFF00045F430 /* BMYJSON.m in Sources */,
+				CB536A6A1904EFC70045F430 /* BMYURLRequestParameter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -333,7 +583,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 			};
@@ -365,7 +615,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -379,6 +629,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "BanMaYunSDKTest/BanMaYunSDKTest-Prefix.pch";
 				INFOPLIST_FILE = "BanMaYunSDKTest/BanMaYunSDKTest-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -392,6 +643,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "BanMaYunSDKTest/BanMaYunSDKTest-Prefix.pch";
 				INFOPLIST_FILE = "BanMaYunSDKTest/BanMaYunSDKTest-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -456,6 +708,7 @@
 				CB5369201904C4890045F430 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		CB5369211904C4890045F430 /* Build configuration list for PBXNativeTarget "BanMaYunSDKTestTests" */ = {
 			isa = XCConfigurationList;
@@ -464,6 +717,7 @@
 				CB5369231904C4890045F430 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

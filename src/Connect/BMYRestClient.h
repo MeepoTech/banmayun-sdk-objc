@@ -128,7 +128,7 @@
  */
 
 // Set User Avatar
-- (void)setUserAvatar:(NSString *)aUserId avatar:(NSData *)avatar;
+- (void)setUserAvatar:(NSString *)aUserId avatar:(NSData *)avatar format:(NSString *)format;
 
 // Get User Avatar
 - (void)getUserAvatar:(NSString *)userId format:(NSString *)format size:(NSString *)size;
@@ -153,7 +153,7 @@
 
 
 // Update User Group
-- (void)updateUserGroup:(NSString *)aUserId groupId:(NSString *)groupId isFromAdmin:(BOOL)isAdmin role:(BMYRelationRole *)role usingIsActivated:(BOOL)usingIsActivedOrNot isActivated:(BOOL)isActivated usingIsBlocked:(BOOL)usingIsBlockedOrNot isBlocked:(BOOL)isBlocked;
+- (void)updateUserGroup:(NSString *)aUserId groupId:(NSString *)groupId role:(BMYRelationRole *)role usingIsActivated:(BOOL)usingIsActivedOrNot isActivated:(BOOL)isActivated usingIsBlocked:(BOOL)usingIsBlockedOrNot isBlocked:(BOOL)isBlocked;
 - (void)updateUserGroup:(NSString *)aUserId groupId:(NSString *)groupId;
 
 
@@ -196,7 +196,7 @@
  */
 
 // Set Group Logo
-- (void)setGroupLogo:(NSString *)groupId logo:(NSData *)logo;
+- (void)setGroupLogo:(NSString *)groupId logo:(NSData *)logo format:(NSString *)format;
 
 // Get Group Logo
 - (void)getGroupLogo:(NSString *)groupId format:(NSString *)format size:(NSString *)size;
@@ -232,7 +232,7 @@
 - (void)getRoot:(NSString *)rootId;
 
 // Set Default Permission
-- (void)setDefaultPermission:(NSString *)rootId insertableToOwner:(BOOL)insertableToOwner readableToOwner:(BOOL)readableToOwner writableToOwner:(BOOL)writableToOwner deletableToOwner:(BOOL)deletableToOwner insertableToOther:(BOOL)insertableToOther readableToOther:(BOOL)readableToOther writableToOther:(BOOL)writableToOther deletableToOther:(BOOL)deletableToOther;
+- (void)setDefaultPermission:(NSString *)rootId insertableToOwner:(BOOL)insertableToOwner readableToOwner:(BOOL)readableToOwner writableToOwner:(BOOL)writableToOwner deletableToOwner:(BOOL)deletableToOwner insertableToOthers:(BOOL)insertableToOthers readableToOthers:(BOOL)readableToOthers writableToOthers:(BOOL)writableToOthers deletableToOthers:(BOOL)deletableToOthers;
 
 // Set Root Quota
 - (void)setRootQuota:(NSString *)aRootId quota:(NSString *)quota;
@@ -309,7 +309,7 @@
  */
 
 // Create Share
-- (void)createShare:(NSString *)rootId metaId:(NSString *)metaId password:(NSString *)passwd expiresAt:(NSString *)expiresAt;
+- (void)createShare:(NSString *)rootId metaId:(NSString *)metaId password:(NSString *)passwd expiresAt:(long)expiresAt;
 
 // Get Share
 - (void)getShare:(NSString *)rootId metaId:(NSString *)metaId shareId:(NSString *)shareId;
@@ -358,7 +358,7 @@
 - (void)utimeFolderOfFileOpsWithRootId:(NSString *)rootId path:(NSString *)path  modifiedAtMillis:(long)modifiedAtMillis;
 
 // Fileops Set Permission
-- (void)setPermissionOfFileOpsWithRootId:(NSString *)rootId path:(NSString *)path insertableToOwner:(BOOL)insertableOwner readableToOwner:(BOOL)readableOwner writableToOwner:(BOOL)writableOwner deletableToOwner:(BOOL)deletableOwner insertableToOther:(BOOL)insertableOther readableToOther:(BOOL)readableOther writableToOther:(BOOL)writableOther deletableToOther:(BOOL)deletableOther;
+- (void)setPermissionOfFileOpsWithRootId:(NSString *)rootId path:(NSString *)path insertableToOwner:(BOOL)insertableOwner readableToOwner:(BOOL)readableOwner writableToOwner:(BOOL)writableOwner deletableToOwner:(BOOL)deletableOwner insertableToOthers:(BOOL)insertableOthers readableToOthers:(BOOL)readableOthers writableToOthers:(BOOL)writableOthers deletableToOthers:(BOOL)deletableOthers;
 
 // Fileops List Permission
 - (void)listPermissionsOfFileOpsWithRootId:(NSString *)rootId;
@@ -686,7 +686,7 @@
 - (void)restClient:(BMYRestClient *)restClient getMetaOfFileOpsFailedWithError:(NSError *)error;
 
 /* Fileops List Folder */
-- (void)restClient:(BMYRestClient *)restClient listedFolderOfFileOps:(BMYMetadata *)metadata;
+- (void)restClient:(BMYRestClient *)restClient listedFolderOfFileOps:(NSArray *)metadataList;
 - (void)restClient:(BMYRestClient *)restClient listFolderOfFileOpsFailedWithError:(NSError *)error;
 
 /* Fileops Move */

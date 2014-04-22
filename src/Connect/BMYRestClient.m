@@ -876,7 +876,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
     }
     NSData *bodyData = [[bodyDict JSONRepresentation] dataUsingEncoding:NSUTF8StringEncoding];
     urlRequest.HTTPBody = bodyData;
-    [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [urlRequest addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest andInformTarget:self selector:@selector(requestDidExistUser:)];
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
@@ -985,7 +985,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanMaYunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"POST";
     urlRequest.HTTPBody = [[bodyDict JSONRepresentation] dataUsingEncoding:NSUTF8StringEncoding];
-    [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [urlRequest addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
 
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest andInformTarget:self selector:@selector(requestDidCreateUser:)];
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
@@ -1296,7 +1296,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
     NSData *bodyData = [[bodyDict JSONRepresentation] dataUsingEncoding:NSUTF8StringEncoding];
     urlRequest.HTTPMethod = @"POST";
     urlRequest.HTTPBody = bodyData;
-    [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    [urlRequest addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest andInformTarget:self selector:@selector(requestDidUpdateUser:)];
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
@@ -1546,9 +1546,9 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
 #pragma mark -
 #pragma mark - Set User Avatar
 
-- (void)setUserAvatar:(NSString *)aUserId avatar:(NSData *)avatar
+- (void)setUserAvatar:(NSString *)aUserId avatar:(NSData *)avatar format:(NSString *)format
 {
-    if (!aUserId) {
+    if (!aUserId || !format) {
         return;
     }
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObjectsAndKeys:
@@ -1558,6 +1558,15 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanMaYunAPIHost path:fullPath parameter:dict];
     urlRequest.HTTPMethod = @"POST";
     urlRequest.HTTPBody = avatar;
+    
+    NSString *contentTypeStr;
+    if ([[format lowercaseString] isEqualToString:@"jpg"]
+        || [[format lowercaseString] isEqualToString:@"jpeg"]) {
+        contentTypeStr = @"image/jpeg";
+    }else if([[format lowercaseString] isEqualToString:@"png"]){
+        contentTypeStr = @"image/png";
+    }
+    [urlRequest addValue:contentTypeStr forHTTPHeaderField:@"Content-Type"];
     
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest andInformTarget:self selector:@selector(requestDidSetUserAvatar:)];
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
@@ -1571,6 +1580,8 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
 
 - (void)requestDidSetUserAvatar:(BMYRequest *)request
 {
+    NSLog(@"%d", [[request response] statusCode]);
+    
     if (request.error) {
         [self checkForAuthenticationFailure:request];
         if ([delegate respondsToSelector:@selector(restClient:setUserAvatarFailedWithError:)]) {
@@ -1687,6 +1698,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
     }
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanMaYunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"POST";
+    [urlRequest addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     urlRequest.HTTPBody = [[bodyDict JSONRepresentation] dataUsingEncoding:NSUTF8StringEncoding];
     
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest andInformTarget:self selector:@selector(requestDidAddUserGroup:)];
@@ -1949,7 +1961,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
 #pragma mark -
 #pragma mark - Update User Group
 
-- (void)updateUserGroup:(NSString *)aUserId groupId:(NSString *)groupId isFromAdmin:(BOOL)isAdmin role:(BMYRelationRole *)role usingIsActivated:(BOOL)usingIsActivedOrNot isActivated:(BOOL)isActivated usingIsBlocked:(BOOL)usingIsBlockedOrNot isBlocked:(BOOL)isBlocked
+- (void)updateUserGroup:(NSString *)aUserId groupId:(NSString *)groupId role:(BMYRelationRole *)role usingIsActivated:(BOOL)usingIsActivedOrNot isActivated:(BOOL)isActivated usingIsBlocked:(BOOL)usingIsBlockedOrNot isBlocked:(BOOL)isBlocked
 {
     if (!aUserId || !groupId) {
         return;
@@ -1960,9 +1972,9 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
     NSString *fullPath = [NSString stringWithFormat:@"/users/%@/groups/%@/update", aUserId, groupId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanMaYunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"POST";
-    
+    [urlRequest addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     NSMutableDictionary *bodyDict = [NSMutableDictionary dictionary];
-    if (isAdmin) {
+
         if (role) {
             [bodyDict setObject:role forKey:@"role"];
         }
@@ -1973,12 +1985,11 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
                 [bodyDict setObject:@"false" forKey:@"is_activated"];
             }
         }
-        if (usingIsBlockedOrNot) {
-            if (isBlocked) {
-                [bodyDict setObject:@"true" forKey:@"is_blocked"];
-            }else{
+    if (usingIsBlockedOrNot) {
+        if (isBlocked) {
+            [bodyDict setObject:@"true" forKey:@"is_blocked"];
+        }else{
                 [bodyDict setObject:@"false" forKey:@"is_blocked"];
-            }
         }
     }
     urlRequest.HTTPBody = [[bodyDict JSONRepresentation] dataUsingEncoding:NSUTF8StringEncoding];
@@ -1989,16 +2000,14 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
                               aUserId, BANMAYUN_USER_ID_KEY,
                               groupId, BANMAYUN_GROUP_ID_KEY,
                               nil];
-    if (isAdmin) {
-        if (role) {
-            [userInfo setObject:role forKey:@"role"];
-        }
-        if (usingIsActivedOrNot) {
-            [userInfo setObject:[NSNumber numberWithBool:isActivated] forKey:@"is_activated"];
-        }
-        if (usingIsBlockedOrNot) {
-            [userInfo setObject:[NSNumber numberWithBool:isBlocked] forKey:@"is_blocked"];
-        }
+    if (role) {
+        [userInfo setObject:role forKey:@"role"];
+    }
+    if (usingIsActivedOrNot) {
+        [userInfo setObject:[NSNumber numberWithBool:isActivated] forKey:@"is_activated"];
+    }
+    if (usingIsBlockedOrNot) {
+        [userInfo setObject:[NSNumber numberWithBool:isBlocked] forKey:@"is_blocked"];
     }
     request.userInfo = userInfo;
     [requests addObject:request];
@@ -2007,7 +2016,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
 
 - (void)updateUserGroup:(NSString *)aUserId groupId:(NSString *)groupId
 {
-    [self updateUserGroup:aUserId groupId:groupId isFromAdmin:NO role:nil usingIsActivated:NO isActivated:NO usingIsBlocked:NO isBlocked:NO];
+    [self updateUserGroup:aUserId groupId:groupId role:nil usingIsActivated:NO isActivated:NO usingIsBlocked:NO isBlocked:NO];
 }
 
 
@@ -2069,7 +2078,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
                             [self accessToken], BANMAYUN_ACCESS_TOKEN_KEY,
                             nil];
-    NSString *fullPath = [NSString stringWithFormat:@"/users/%@/groups/%@/update", aUserId, groupId];
+    NSString *fullPath = [NSString stringWithFormat:@"/users/%@/groups/%@", aUserId, groupId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanMaYunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"DELETE";
     
@@ -2080,7 +2089,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
                               groupId, BANMAYUN_GROUP_ID_KEY,
                               nil];
     request.userInfo = userInfo;
-    [requests addObject:userInfo];
+    [requests addObject:request];
 }
 
 
@@ -2149,6 +2158,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
         [bodyDict setObject:name forKey:@"name"];
     }
     urlRequest.HTTPMethod = @"POST";
+    [urlRequest addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     urlRequest.HTTPBody = [[bodyDict JSONRepresentation] dataUsingEncoding:NSUTF8StringEncoding];
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest andInformTarget:self selector:@selector(requestDidExistGroup:)];
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
@@ -2253,6 +2263,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
     NSString *fullPath = [NSString stringWithFormat:@"/groups"];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanMaYunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"POST";
+    [urlRequest addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     urlRequest.HTTPBody = [[bodyDict JSONRepresentation] dataUsingEncoding:NSUTF8StringEncoding];
     
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest andInformTarget:self selector:@selector(requestDidCreateGroup:)];
@@ -2559,6 +2570,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
     }
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanMaYunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"POST";
+    [urlRequest addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     urlRequest.HTTPBody = [[bodyDict JSONRepresentation] dataUsingEncoding:NSUTF8StringEncoding];
     
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest andInformTarget:self selector:@selector(requestDidUpdateGroup:)];
@@ -2723,7 +2735,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
 #pragma mark -
 #pragma mark - Set Group Logo
 
-- (void)setGroupLogo:(NSString *)groupId logo:(NSData *)logo
+- (void)setGroupLogo:(NSString *)groupId logo:(NSData *)logo format:(NSString *)format
 {
     if (!groupId) {
         return;
@@ -2735,6 +2747,11 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanMaYunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"POST";
     urlRequest.HTTPBody = logo;
+    if ([[format lowercaseString] isEqualToString:@"png"]) {
+        [urlRequest addValue:@"image/png" forHTTPHeaderField:@"Content-Type"];
+    }else if([[format lowercaseString] isEqualToString:@"jpg"] || [[format lowercaseString] isEqualToString:@"jpeg"]){
+        [urlRequest addValue:@"image/jpeg" forHTTPHeaderField:@"Content-Type"];
+    }
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest andInformTarget:self selector:@selector(requestDidSetGroupLogo:)];
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                                      [self accessToken], BANMAYUN_ACCESS_TOKEN_KEY,
@@ -2914,7 +2931,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
                                      aUserId, BANMAYUN_USER_ID_KEY,
                                      nil];
     request.userInfo = userInfo;
-    [requests addObject:userInfo];
+    [requests addObject:request];
 }
 
 
@@ -2981,10 +2998,18 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
         [params setObject:role forKey:@"role"];
     }
     if (usingIsActivatedOrNot) {
-        [params setObject:[NSNumber numberWithBool:isActivated] forKey:@"is_activated"];
+        if (isActivated) {
+            [params setObject:@"true" forKey:@"is_activated"];
+        }else{
+            [params setObject:@"false" forKey:@"is_activated"];
+        }
     }
     if (usingIsBlockedOrNot) {
-        [params setObject:[NSNumber numberWithBool:isBlocked] forKey:@"is_blocked"];
+        if (isBlocked) {
+            [params setObject:@"true" forKey:@"is_blocked"];
+        }else{
+            [params setObject:@"false" forKey:@"is_blocked"];
+        }
     }
     if (usingOffsetOrNot) {
         [params setObject:[NSNumber numberWithInteger:offset] forKey:@"offset"];
@@ -3092,6 +3117,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
     }
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanMaYunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"POST";
+    [urlRequest addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     urlRequest.HTTPBody = [[bodyDict JSONRepresentation] dataUsingEncoding:NSUTF8StringEncoding];
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest andInformTarget:self selector:@selector(requestDidUpdateGroupUser:)];
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
@@ -3290,7 +3316,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
 #pragma mark -
 #pragma mark - Set Default Permission
 
-- (void)setDefaultPermission:(NSString *)aRootId insertableToOwner:(BOOL)insertableToOwner readableToOwner:(BOOL)readableToOwner writableToOwner:(BOOL)writableToOwner deletableToOwner:(BOOL)deletableToOwner insertableToOther:(BOOL)insertableToOther readableToOther:(BOOL)readableToOther writableToOther:(BOOL)writableToOther deletableToOther:(BOOL)deletableToOther
+- (void)setDefaultPermission:(NSString *)aRootId insertableToOwner:(BOOL)insertableToOwner readableToOwner:(BOOL)readableToOwner writableToOwner:(BOOL)writableToOwner deletableToOwner:(BOOL)deletableToOwner insertableToOthers:(BOOL)insertableToOthers readableToOthers:(BOOL)readableToOthers writableToOthers:(BOOL)writableToOthers deletableToOthers:(BOOL)deletableToOthers
 {
     if (aRootId == nil) {
         return;
@@ -3301,26 +3327,26 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
     NSString *fullPath = [NSString stringWithFormat:@"/roots/%@/default_permission", aRootId];
 
     NSMutableDictionary *bodyDict = [NSMutableDictionary dictionary];
-    if (writableToOther) {
-        [bodyDict setObject:@"true" forKey:@"writable_to_other"];
+    if (writableToOthers) {
+        [bodyDict setObject:@"true" forKey:@"writable_to_others"];
     }else{
-        [bodyDict setObject:@"false" forKey:@"writable_to_other"];
+        [bodyDict setObject:@"false" forKey:@"writable_to_others"];
     }
     
-    if (readableToOther) {
-        [bodyDict setObject:@"true" forKey:@"readable_to_other"];
+    if (readableToOthers) {
+        [bodyDict setObject:@"true" forKey:@"readable_to_others"];
     }else{
-        [bodyDict setObject:@"false" forKey:@"readable_to_other"];
+        [bodyDict setObject:@"false" forKey:@"readable_to_others"];
     }
-    if (insertableToOther) {
-        [bodyDict setObject:@"true" forKey:@"insertable_to_other"];
+    if (insertableToOthers) {
+        [bodyDict setObject:@"true" forKey:@"insertable_to_others"];
     }else{
-        [bodyDict setObject:@"false" forKey:@"insertable_to_other"];
+        [bodyDict setObject:@"false" forKey:@"insertable_to_others"];
     }
-    if (deletableToOther) {
-        [bodyDict setObject:@"true" forKey:@"deletable_to_other"];
+    if (deletableToOthers) {
+        [bodyDict setObject:@"true" forKey:@"deletable_to_others"];
     }else{
-        [bodyDict setObject:@"false" forKey:@"deletable_to_other"];
+        [bodyDict setObject:@"false" forKey:@"deletable_to_others"];
     }
     
     if (writableToOwner) {
@@ -3347,6 +3373,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
     
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanMaYunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"POST";
+    [urlRequest addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     urlRequest.HTTPBody = [[bodyDict JSONRepresentation] dataUsingEncoding:NSUTF8StringEncoding];
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest andInformTarget:self selector:@selector(requestDidSetDefaultPermission:)];
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
@@ -3356,10 +3383,10 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
                                      [NSNumber numberWithBool:readableToOwner], @"readable_to_owner",
                                      [NSNumber numberWithBool:writableToOwner], @"writable_to_owner",
                                      [NSNumber numberWithBool:deletableToOwner], @"deletable_to_owner",
-                                     [NSNumber numberWithBool:insertableToOther], @"insertable_to_other",
-                                     [NSNumber numberWithBool:readableToOther], @"readable_to_other",
-                                     [NSNumber numberWithBool:writableToOther], @"writable_to_other",
-                                     [NSNumber numberWithBool:deletableToOther], @"deletable_to_other",
+                                     [NSNumber numberWithBool:insertableToOthers], @"insertable_to_others",
+                                     [NSNumber numberWithBool:readableToOthers], @"readable_to_others",
+                                     [NSNumber numberWithBool:writableToOthers], @"writable_to_others",
+                                     [NSNumber numberWithBool:deletableToOthers], @"deletable_to_others",
                                      nil];
     request.userInfo = userInfo;
     [requests addObject:request];
@@ -4281,7 +4308,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
 - (void)parseCommitChunkedUploadMetadataFailedForRequest:(BMYRequest *)request
 {
     NSError *error = [NSError errorWithDomain:BMYErrorDomain code:BMYErrorInvalidResponse userInfo:request.userInfo];
-    BMYLogWarning(@"BanMaYunSDK: error parsing comment");
+    BMYLogWarning(@"BanMaYunSDK: error parsing metadata");
     if ([delegate respondsToSelector:@selector(restClient:commitChunkedUploadFailedWithError:)]) {
         [delegate restClient:self commitChunkedUploadFailedWithError:error];
     }
@@ -4345,7 +4372,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
 - (void)parseCopyFileMetadataFailedForRequest:(BMYRequest *)request
 {
     NSError *error = [NSError errorWithDomain:BMYErrorDomain code:BMYErrorInvalidResponse userInfo:request.userInfo];
-    BMYLogWarning(@"BanMaYunSDK: error parsing comment");
+    BMYLogWarning(@"BanMaYunSDK: error parsing metadata");
     if ([delegate respondsToSelector:@selector(restClient:copyFileFailedWithError:)]) {
         [delegate restClient:self copyFileFailedWithError:error];
     }
@@ -4410,7 +4437,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
 - (void)parseCreateFolderMetadataFailedForRequest:(BMYRequest *)request
 {
     NSError *error = [NSError errorWithDomain:BMYErrorDomain code:BMYErrorInvalidResponse userInfo:request.userInfo];
-    BMYLogWarning(@"BanMaYunSDK: error parsing comment");
+    BMYLogWarning(@"BanMaYunSDK: error parsing metadata");
     if ([delegate respondsToSelector:@selector(restClient:createFolderFailedWithError:)]) {
         [delegate restClient:self createFolderFailedWithError:error];
     }
@@ -4476,7 +4503,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
 - (void)parseGetMetaOfFileOpsMetadataFailedForRequest:(BMYRequest *)request
 {
     NSError *error = [NSError errorWithDomain:BMYErrorDomain code:BMYErrorInvalidResponse userInfo:request.userInfo];
-    BMYLogWarning(@"BanMaYunSDK: error parsing comment");
+    BMYLogWarning(@"BanMaYunSDK: error parsing metadata");
     if ([delegate respondsToSelector:@selector(restClient:getMetaOfFileOpsFailedWithError:)]) {
         [delegate restClient:self getMetaOfFileOpsFailedWithError:error];
     }
@@ -4518,23 +4545,28 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
             [delegate restClient:self listFolderOfFileOpsFailedWithError:request.error];
         }
     }else{
-        SEL sel = @selector(parseListFolderOfFileOpsMetadataWithRequest:resultThread:);
+        SEL sel = @selector(parseListFolderOfFileOpsMetadataListWithRequest:resultThread:);
         [self genInvocationObjectForCallingParseFun:sel request:request];
     }
     [requests removeObject:request];
 }
 
 
-- (void)parseListFolderOfFileOpsMetadataWithRequest:(BMYRequest *)request resultThread:(NSThread *)thread
+- (void)parseListFolderOfFileOpsMetadataListWithRequest:(BMYRequest *)request resultThread:(NSThread *)thread
 {
-    [self parseMetadataObject:request resultThread:thread succSelector:@selector(didParseListFolderOfFileOpsMetadata:) failSelector:@selector(parseListFolderOfFileOpsMetadataFailedForRequest:)];
+    NSArray *resultArray = [request parseResponseAsType:[NSArray class]];
+    if (resultArray) {
+        [self performSelector:@selector(didParseListFolderOfFileOpsMetadataList:) onThread:thread withObject:resultArray waitUntilDone:NO];
+    }else{
+        [self performSelector:@selector(parseListFolderOfFileOpsMetadataFailedForRequest:) onThread:thread withObject:resultArray waitUntilDone:NO];
+    }
 }
 
 
-- (void)didParseListFolderOfFileOpsMetadata:(BMYMetadata *)metadata
+- (void)didParseListFolderOfFileOpsMetadataList:(NSArray *)metadataList
 {
     if ([delegate respondsToSelector:@selector(restClient:listedFolderOfFileOps:)]) {
-        [delegate restClient:self listedFolderOfFileOps:metadata];
+        [delegate restClient:self listedFolderOfFileOps:metadataList];
     }
 }
 
@@ -4542,7 +4574,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
 - (void)parseListFolderOfFileOpsMetadataFailedForRequest:(BMYRequest *)request
 {
     NSError *error = [NSError errorWithDomain:BMYErrorDomain code:BMYErrorInvalidResponse userInfo:request.userInfo];
-    BMYLogWarning(@"BanMaYunSDK: error parsing comment");
+    BMYLogWarning(@"BanMaYunSDK: error parsing metadata");
     if ([delegate respondsToSelector:@selector(restClient:listFolderOfFileOpsFailedWithError:)]) {
         [delegate restClient:self listFolderOfFileOpsFailedWithError:error];
     }
@@ -4607,7 +4639,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
 - (void)parseMoveOfFileOpsMetadataFailedForRequest:(BMYRequest *)request
 {
     NSError *error = [NSError errorWithDomain:BMYErrorDomain code:BMYErrorInvalidResponse userInfo:request.userInfo];
-    BMYLogWarning(@"BanMaYunSDK: error parsing comment");
+    BMYLogWarning(@"BanMaYunSDK: error parsing metadata");
     if ([delegate respondsToSelector:@selector(restClient:moveOfFileOpsFailedWithError:)]) {
         [delegate restClient:self moveOfFileOpsFailedWithError:error];
     }
@@ -4674,7 +4706,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
 - (void)parseRollbackOfFileOpsMetadataFailedForRequest:(BMYRequest *)request
 {
     NSError *error = [NSError errorWithDomain:BMYErrorDomain code:BMYErrorInvalidResponse userInfo:request.userInfo];
-    BMYLogWarning(@"BanMaYunSDK: error parsing comment");
+    BMYLogWarning(@"BanMaYunSDK: error parsing metadata");
     if ([delegate respondsToSelector:@selector(restClient:rollbackOfFileOpsFailedWithError:)]) {
         [delegate restClient:self rollbackOfFileOpsFailedWithError:error];
     }
@@ -4741,7 +4773,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
 - (void)parseThunderUploadOfFileOpsMetadataFailedForRequest:(BMYRequest *)request
 {
     NSError *error = [NSError errorWithDomain:BMYErrorDomain code:BMYErrorInvalidResponse userInfo:request.userInfo];
-    BMYLogWarning(@"BanMaYunSDK: error parsing comment");
+    BMYLogWarning(@"BanMaYunSDK: error parsing metadata");
     if ([delegate respondsToSelector:@selector(restClient:thunderUploadOfFileOpsFailedWithError:)]) {
         [delegate restClient:self thunderUploadOfFileOpsFailedWithError:error];
     }
@@ -4805,7 +4837,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
 - (void)parseUtimeFolderOfFileOpsMetadataFailedForRequest:(BMYRequest *)request
 {
     NSError *error = [NSError errorWithDomain:BMYErrorDomain code:BMYErrorInvalidResponse userInfo:request.userInfo];
-    BMYLogWarning(@"BanMaYunSDK: error parsing comment");
+    BMYLogWarning(@"BanMaYunSDK: error parsing metadata");
     if ([delegate respondsToSelector:@selector(restClient:utimeFolderOfFileOpsFailedWithError:)]) {
         [delegate restClient:self utimeFolderOfFileOpsFailedWithError:error];
     }
@@ -4814,7 +4846,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
 
 #pragma mark -
 #pragma mark - Fileops Set Permission
-- (void)setPermissionOfFileOpsWithRootId:(NSString *)rootId path:(NSString *)path insertableToOwner:(BOOL)insertableOwner readableToOwner:(BOOL)readableOwner writableToOwner:(BOOL)writableOwner deletableToOwner:(BOOL)deletableOwner insertableToOther:(BOOL)insertableOther readableToOther:(BOOL)readableOther writableToOther:(BOOL)writableOther deletableToOther:(BOOL)deletableOther
+- (void)setPermissionOfFileOpsWithRootId:(NSString *)rootId path:(NSString *)path insertableToOwner:(BOOL)insertableOwner readableToOwner:(BOOL)readableOwner writableToOwner:(BOOL)writableOwner deletableToOwner:(BOOL)deletableOwner insertableToOthers:(BOOL)insertableOthers readableToOthers:(BOOL)readableOthers writableToOthers:(BOOL)writableOthers deletableToOthers:(BOOL)deletableOthers
 {
     if (!rootId || !path) {
         return;
@@ -4850,27 +4882,27 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
         [bodyDict setObject:@"false" forKey:@"deletable_to_owner"];
     }
     
-    if (insertableOther) {
-        [bodyDict setObject:@"true" forKey:@"insertable_to_other"];
+    if (insertableOthers) {
+        [bodyDict setObject:@"true" forKey:@"insertable_to_others"];
     }else{
-        [bodyDict setObject:@"false" forKey:@"insertable_to_other"];
+        [bodyDict setObject:@"false" forKey:@"insertable_to_others"];
     }
-    if (readableOther) {
-        [bodyDict setObject:@"true" forKey:@"readable_to_other"];
+    if (readableOthers) {
+        [bodyDict setObject:@"true" forKey:@"readable_to_others"];
     }else{
-        [bodyDict setObject:@"false" forKey:@"readable_to_other"];
-    }
-    
-    if (writableOther) {
-        [bodyDict setObject:@"true" forKey:@"writable_to_other"];
-    }else{
-        [bodyDict setObject:@"false" forKey:@"writable_to_other"];
+        [bodyDict setObject:@"false" forKey:@"readable_to_others"];
     }
     
-    if (deletableOther) {
-        [bodyDict setObject:@"true" forKey:@"deletable_to_other"];
+    if (writableOthers) {
+        [bodyDict setObject:@"true" forKey:@"writable_to_others"];
     }else{
-        [bodyDict setObject:@"false" forKey:@"deletable_to_other"];
+        [bodyDict setObject:@"false" forKey:@"writable_to_others"];
+    }
+    
+    if (deletableOthers) {
+        [bodyDict setObject:@"true" forKey:@"deletable_to_others"];
+    }else{
+        [bodyDict setObject:@"false" forKey:@"deletable_to_others"];
     }
     NSString *bodyStr = [bodyDict JSONRepresentation];
     NSData *bodyData = [bodyStr dataUsingEncoding:NSUTF8StringEncoding];
@@ -5105,6 +5137,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
     }
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanMaYunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"POST";
+    [urlRequest addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
     urlRequest.HTTPBody = [[bodyDict JSONRepresentation] dataUsingEncoding:NSUTF8StringEncoding];
     
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest andInformTarget:self selector:@selector(requestDidCreateComment:)];
@@ -5411,7 +5444,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
 #pragma mark -
 #pragma mark - Create Share
 
-- (void)createShare:(NSString *)rootId metaId:(NSString *)metaId password:(NSString *)passwd expiresAt:(NSString *)expiresAt
+- (void)createShare:(NSString *)rootId metaId:(NSString *)metaId password:(NSString *)passwd expiresAt:(long)expiresAt
 {
     if (!rootId || !metaId) {
         return;
@@ -5424,7 +5457,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
         [params setObject:passwd forKey:@"password"];
     }
     if (expiresAt) {
-        [params setObject:expiresAt forKey:@"expires_at"];
+        [params setObject:[NSNumber numberWithLong:expiresAt] forKey:@"expires_at"];
     }
     
     NSString *fullPath = [NSString stringWithFormat:@"/roots/%@/files/%@/shares", rootId, metaId];
@@ -5567,6 +5600,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
     }
     NSString *fullPath = [NSString stringWithFormat:@"/roots/%@/files/%@/shares", rootId, metaId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanMaYunAPIHost path:fullPath parameter:params];
+    urlRequest.HTTPMethod = @"GET";
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest andInformTarget:self selector:@selector(requestDidListShares:)];
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                                      rootId, BANMAYUN_ROOT_ID_KEY,
@@ -5887,6 +5921,7 @@ NSInteger kBMYBanMaYunUploadChunkSize = 1024 * 1024;
                                    nil];
     NSString *fullPath = [NSString stringWithFormat:@"/roots/%@/trashes/%@", rootId, trashId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanMaYunAPIHost path:fullPath parameter:params];
+    urlRequest.HTTPMethod = @"DELETE";
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest andInformTarget:self selector:@selector(requestDidDeleteTrash:)];
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                                      rootId, BANMAYUN_ROOT_ID_KEY,

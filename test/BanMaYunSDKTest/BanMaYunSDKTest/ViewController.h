@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BMYRestClient.h"
 
-@interface ViewController : UIViewController
+@interface ViewController : UIViewController<BMYRestClientDelegate>
 
 @end
