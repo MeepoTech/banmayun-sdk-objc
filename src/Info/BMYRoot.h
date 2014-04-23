@@ -1,9 +1,8 @@
 //
 //  BMYRoot.h
-//  BanMaYunSDK
+//  BanmayunSDK
 //
-//  Created by MeePoTech on 14-4-9.
-//  Copyright (c) 2014年 MeePoTech. All rights reserved.
+//  Copyright (c) 2014年 Banmayun. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

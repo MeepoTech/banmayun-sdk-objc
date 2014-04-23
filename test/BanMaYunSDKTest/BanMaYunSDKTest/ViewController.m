@@ -1,9 +1,8 @@
 //
 //  ViewController.m
-//  BanMaYunSDKTest
+//  BanmayunSDKTest
 //
-//  Created by MeePoTech on 14-4-21.
-//  Copyright (c) 2014年 MeePoTech. All rights reserved.
+//  Copyright (c) 2014年 Banmayun. All rights reserved.
 //
 
 #import "ViewController.h"
@@ -24,7 +23,7 @@
 
 #define USER_ACCESS_TOKEN @"accessToken"
 
-@interface ViewController ()<NSURLConnectionDelegate, NSURLConnectionDataDelegate>
+@interface ViewController () <NSURLConnectionDelegate, NSURLConnectionDataDelegate>
 {
     NSMutableData *receivedData;
 }
@@ -51,7 +50,7 @@
     //    NSString *passwd = @"123456";
     //    NSString *email = @"cumt0516@gmail.com";
     //    NSString *displayname = @"testBanMaYunSDKtest";
-    //    [restclient createUser:name password:passwd email:email displayName:displayname isFromAdmin:NO source:@"hehe" usingGroupsCanOwn:NO groupsCanOwn:0 role:nil];
+//    [restclient createUser:name password:passwd email:email displayName:displayname source:@"hehe" groupsCanOwn:nil role:nil];
     
     /* Test SignIn */
     //    NSString *username = @"testSDK";
@@ -107,7 +106,7 @@
     /* List User Links */
     //    NSString *userId = @"3rzznz12d9wd";
     //    [restclient listUserLinks:userId];
-    //    [restclient listUserLinks:userId usingOffset:YES offset:1 usingLimit:YES limit:1];
+//    [restclient listUserLinks:userId offset:[NSNumber numberWithInteger:1] limit:[NSNumber numberWithInteger:1]];
     
     /* Delete User Link */
     //    NSString *userId = @"3rzznz12d9wd";
@@ -131,12 +130,12 @@
     //    [[NSUserDefaults standardUserDefaults] setObject:@"4uzfuujzc8ni45gfwvipp97np7" forKey:USER_ACCESS_TOKEN]; // 设置管理员账号的token
     //    [[NSUserDefaults standardUserDefaults] synchronize];
     ////    [restclient listUsers];
-    //    [restclient listUsers:@"user" usingIsActivated:YES isActivated:YES usingIsBlocked:YES isBlocked:NO usingOffset:YES offset:-10 usingLimit:NO limit:10];
+//    [restclient listUsers:@"user" isActivated:[NSNumber numberWithBool:YES] isBlocked:[NSNumber numberWithBool:NO] offset:[NSNumber numberWithInteger:-10] limit:[NSNumber numberWithInteger:10]];
     
     /* Update User */
     //    NSString *userId = @"3rzznz12d9wd";
     //    NSString *displayname = @"testSDK";
-    //    [restclient updateUser:userId displayName:displayname isFromAdmin:NO usingGroupsCanOwn:YES groupsCanOwn:0 role:nil usingIsBlocked:NO isBlocked:NO];
+//    [restclient updateUser:userId displayName:displayname groupsCanOwn:[NSNumber numberWithInteger:0] role:nil isBlocked:nil];
     
     //    [[NSUserDefaults standardUserDefaults] setObject:@"4uzfuujzc8ni45gfwvipp97np7" forKey:USER_ACCESS_TOKEN];  //设置管理员账号的token
     //    [[NSUserDefaults standardUserDefaults] synchronize];
@@ -147,7 +146,7 @@
     //                          @"用户", @"display_value",
     //                          nil];
     //    BMYUserRole *role = [[BMYUserRole alloc] initWithDictionary:dict];
-    //    [restclient updateUser:userId displayName:displayname isFromAdmin:YES usingGroupsCanOwn:NO groupsCanOwn:3 role:role usingIsBlocked:NO isBlocked:YES];
+//    [restclient updateUser:userId displayName:displayname groupsCanOwn:[NSNumber numberWithInteger:3] role:role isBlocked:nil];
     
     /* Verify User Email */
     //    NSString *userId = @"3rzznz12d9wd";
@@ -196,7 +195,7 @@
 //                                         @"普通成员", @"display_value",
 //                                         nil];
 //        BMYRelationRole *role = [[BMYRelationRole alloc] initWithDictionary:roleDict];
-//        [restclient addUserGroup:userId groupId:groupId remarks:remark isFromAdmin:YES role:role];
+//        [restclient addUserGroup:userId groupId:groupId remarks:remark role:role];
     
     /* Get User Group */
 //        NSString *userId = @"3rzznz12d9wd";
@@ -212,7 +211,7 @@
 //        NSInteger limit = 3;
 //        [restclient listUserGroups:userId];
 //        [restclient listUserGroups:userId role:role];
-//        [restclient listUserGroups:userId role:role usingIsActivatedParam:YES isActivated:isActivated usingIsBlockedParam:YES isBlocked:isBlocked usingOffsetParam:YES offset:offset usingLimitParam:YES limit:limit];
+//    [restclient listUserGroups:userId role:role isActivated:[NSNumber numberWithBool:isActivated] isBlocked:[NSNumber numberWithBool:isBlocked] offset:[NSNumber numberWithInteger:offset] limit:[NSNumber numberWithInteger:limit]];
     
     /* Update User Group */
 //        [[NSUserDefaults standardUserDefaults] setObject:@"4uzfuujzc8ni45gfwvipp97np7" forKey:USER_ACCESS_TOKEN];
@@ -225,7 +224,7 @@
 //                                         nil];
 //        BMYRelationRole *role = [[BMYRelationRole alloc] initWithDictionary:roleDict];
 //        [restclient updateUserGroup:userId groupId:groupId];
-//        [restclient updateUserGroup:userId groupId:groupId role:role usingIsActivated:YES isActivated:YES usingIsBlocked:YES isBlocked:NO];
+//    [restclient updateUserGroup:userId groupId:groupId role:role isActivated:[NSNumber numberWithBool:YES] isBlocked:[NSNumber numberWithBool:NO]];
     
     /* Remove User Group */
 //        NSString *userId = @"3rzznz12d9wd";
@@ -269,7 +268,7 @@
 //        NSString *tags = @"管理员创建, 群组";
 //        NSString *announce = @"sheneme ";
 //        NSString *source = @"";
-//        [restclient createGroup:groupName type:type isVisible:isVisible intro:intro tags:tags announce:announce isFromAdmin:YES ownerId:ownerId source:source];
+//    [restclient createGroup:groupName type:type isVisible:[NSNumber numberWithBool:isVisible] intro:intro tags:tags announce:announce ownerId:ownerId source:source];
     
     /* Get Group */
 //        NSString *groupId = @"28fte911mehi";
@@ -280,7 +279,7 @@
     /* List Groups */
 //        NSString *type = @"public";
 //        [restclient listGroups];
-//        [restclient listGroups:type usingIsActivated:YES isAcivated:NO usingIsBlocked:YES isBlocked:NO usingOffset:YES offset:0 usingLimit:YES limit:1];
+//    [restclient listGroups:type isAcivated:[NSNumber numberWithBool:NO] isBlocked:[NSNumber numberWithBool:NO] offset:[NSNumber numberWithInteger:0] limit:[NSNumber numberWithInteger:1]];
     
     /* Update Group */
 //        NSString *groupId = @"28fte911mehi";
@@ -310,9 +309,9 @@
 //        NSString *intro = @"呵呵呵";
 //        NSString *tags = @"公有群 ";
 //        NSString *announce = @"公告";
-//        [restclient updateGroup:groupId type:type isVisible:isVisible isFromAdmin:YES usingIsBlocked:YES isBlocked:NO];
-//        [restclient updateGroup:groupId type:type isVisible:isVisible];
-//        [restclient updateGroup:groupId type:type isVisible:isVisible intro:intro tags:tags announce:announce isFromAdmin:YES usingIsBlocked:YES isBlocked:NO];
+//    [restclient updateGroup:groupId type:type isVisible:[NSNumber numberWithBool:isVisible] isBlocked:[NSNumber numberWithBool:YES]];
+//    [restclient updateGroup:groupId type:type isVisible:[NSNumber numberWithBool:isVisible]];
+//    [restclient updateGroup:groupId type:type isVisible:[NSNumber numberWithBool:isVisible] intro:intro tags:tags announce:announce isBlocked:[NSNumber numberWithBool:isBlocked]];
     
     /* Delete Group */
 //        NSString *groupId = @"28fte911mehi";
@@ -356,7 +355,7 @@
 //        NSString *groupId = @"";
 //        NSString *role = @"member";
 //        [restclient listGroupUsers:groupId];
-//        [restclient listGroupUsers:groupId role:role usingIsActivated:YES isActivated:YES usingIsBlocked:YES isBlocked:YES usingOffset:YES offset:0 usingLimit:NO limit:0];
+//    [restclient listGroupUsers:groupId role:role isActivated:[NSNumber numberWithBool:YES] isBlocked:[NSNumber numberWithBool:YES] offset:[NSNumber numberWithInteger:0] limit:[NSNumber numberWithInteger:0]];
     
     /* Update Group User */
 //        NSString *groupId = @"28pnax11mimx";
@@ -369,7 +368,7 @@
 //                                         nil];
 //        BMYRelationRole *role = [[BMYRelationRole alloc] initWithDictionary:roleDict];
 //        [restclient updateGroupUser:groupId userId:userId];
-//        [restclient updateGroupUser:groupId userId:userId role:role usingIsActived:YES isActivated:YES usingIsBlocked:YES isBlocked:NO];
+//    [restclient updateGroupUser:groupId userId:userId role:role isActivated:[NSNumber numberWithBool:YES] isBlocked:[NSNumber numberWithBool:NO]];
     
     /* Remove Group User */
 //        NSString *groupId = @"28pnax11mimx";
@@ -383,7 +382,7 @@
     
     /* Set Default Permission */
 //        NSString *root_id = @"42q89f12i2za";
-//        [restclient setDefaultPermission:root_id insertableToOwner:YES readableToOwner:YES writableToOwner:YES deletableToOwner:NO insertableToOthers:YES readableToOthers:YES writableToOthers:NO deletableToOthers:NO];
+//    [restclient setDefaultPermission:root_id insertableToOwner:[NSNumber numberWithBool:YES] readableToOwner:[NSNumber numberWithBool:YES] writableToOwner:[NSNumber numberWithBool:YES] deletableToOwner:[NSNumber numberWithBool:NO] insertableToOthers:[NSNumber numberWithBool:YES] readableToOthers:[NSNumber numberWithBool:YES] writableToOthers:[NSNumber numberWithBool:NO] deletableToOthers:[NSNumber numberWithBool:NO]];
     
     /* Set Root Quota */
 //        NSString *rootId = @"42q89f12i2za";
@@ -401,7 +400,7 @@
 //    NSString *path = @"test.txt";
 //    NSString *docPath = NSHomeDirectory();
 //    NSString *testFilePath = [docPath stringByAppendingPathComponent:@"documents/test.txt"];
-//    [restclient putFileByPathWithRootId:rootId path:path modifiedAtMillis:12331243124312 usingOverwrite:NO overwrite:NO fromPath:testFilePath];
+//    [restclient putFileByPathWithRootId:rootId path:path modifiedAtMillis:[NSNumber numberWithLong:12331243124312] overwrite:[NSNumber numberWithBool:NO] fromPath:testFilePath];
     
     /* Get File by Path */
 //    NSString *rootId = @"42q89f12i2za";
@@ -409,7 +408,7 @@
 //    NSString *tmpFolderPath = NSTemporaryDirectory();
 //    NSString *tmpTestFilePath = [tmpFolderPath stringByAppendingPathComponent:@"tempTestFile.txt"];
 //    [restclient getFileBypathWithRootId:rootId path:path toPath:tmpTestFilePath];
-//    [restclient getFileByPathWithRootId:rootId path:path usingVersion:NO version:0 usingOffset:YES offset:0 usingBytes:NO bytes:0 toPath:tmpTestFilePath];
+//    [restclient getFileByPathWithRootId:rootId path:path version:nil offset:[NSNumber numberWithInteger:0] bytes:nil toPath:tmpTestFilePath];
     
     /* Trash File by Path */
 //    NSString *rootId = @"42q89f12i2za";
@@ -436,7 +435,7 @@
 //        NSInteger offset = 0;
 //        NSInteger limit = 0;
 //        [restclient listComments:rootId metaId:metaId];
-//        [restclient listComments:rootId metaId:metaId usingOffset:YES offset:0 usingLimit:NO limit:0];
+//    [restclient listComments:rootId metaId:metaId offset:[NSNumber numberWithInteger:0] limit:nil];
     
     /* Delete Comment */
 //        NSString *rootId = @"42q89f12i2za";
@@ -458,7 +457,7 @@
 //        NSString *metaId = @"ehgtq53642cg";
 //        NSString *passwd = @"123456";
 //        long expires_at_millis = 1222222341421512;
-//        [restclient createShare:rootId metaId:metaId password:passwd expiresAt:expires_at_millis];
+//    [restclient createShare:rootId metaId:metaId password:passwd expiresAt:[NSNumber numberWithLong:1222222341421512]];
     
     /* Get Share */
 //    NSString *rootId = @"42q89f12i2za";
@@ -470,7 +469,7 @@
 //        NSString *rootId = @"42q89f12i2za";
 //        NSString *metaId = @"ehgtq53642cg";
 //        [restclient listShares:rootId metaId:metaId];
-//        [restclient listShares:rootId metaId:metaId usingOffset:YES offset:0 usingLimit:NO limit:0];
+//    [restclient listShares:rootId metaId:metaId offset:[NSNumber numberWithInteger:0] limit:nil];
     
     /* Delete Share */
 //        NSString *rootId = @"42q89f12i2za";
@@ -492,7 +491,7 @@
     /* Fileops Get Meta */
 //    NSString *rootId = @"42q89f12i2za";
 //    NSString *path = @"test.txt";
-//    [restclient getMetaOfFileOpsWithRootId:rootId path:path list:NO];
+//    [restclient getMetaOfFileOpsWithRootId:rootId path:path isListDirContent:[NSNumber numberWithBool:NO]];
     
     /* Fileops List Folder */
 //    NSString *rootId = @"42q89f12i2za";
@@ -510,12 +509,12 @@
     /* List Trashes */
 //        NSString *rootId = @"42q89f12i2za";
 //        [restclient listTrashes:rootId];
-//        [restclient listTrashes:rootId usingOffset:YES offset:0 usingLimit:NO limit:NO];
+//    [restclient listTrashes:rootId offset:[NSNumber numberWithInteger:0] limit:nil];
     
     /* Delete Trash */
-        NSString *rootId = @"42q89f12i2za";
-        NSString *trashId = @"41ejzg12hf67";
-        [restclient deleteTrash:rootId trashId:trashId];
+//        NSString *rootId = @"42q89f12i2za";
+//        NSString *trashId = @"41ejzg12hf67";
+//        [restclient deleteTrash:rootId trashId:trashId];
     
     /* Delete All Trashes */
 //        NSString *rootId = @"42q89f12i2za";
@@ -539,14 +538,14 @@
 //            [[NSUserDefaults standardUserDefaults] synchronize];
 //        [restclient searchUsers:query];
 //        [restclient searchUsers:query groupId:groupId];
-//        [restclient searchUsers:query groupId:groupId usingOffset:YES offset:0 usingLimit:NO limit:NO];
-    
+//    [restclient searchUsers:query groupId:groupId offset:[NSNumber numberWithInteger:0] limit:nil];
+
     /* Search Groups */
 //        NSString *query = @"test";
 //        NSString *useId = @"3rzznz12d9wd";
 //        [restclient searchGroups:query];
     //    [restclient searchGroups:query userId:userId];
-    //    [restclient searchGroups:query userId:userId usingOffset:YES offset:0 usingLimit:NO limit:0];
+//    [restclient searchGroups:query userId:userId offset:[NSNumber numberWithInteger:0] limit:nil];
     
     /* Search Files */
 //        NSString *query = @"aaa";
@@ -556,8 +555,7 @@
 //        [[NSUserDefaults standardUserDefaults] synchronize];
 //        [restclient searchFiles:query];
     //    [restclient searchFiles:query rootId:rootId path:path];
-    //    [restclient searchFiles:query rootId:rootId path:path usingOffset:YES offset:0 usingLimit:NO limit:NO];
-    
+//    [restclient searchFiles:query rootId:rootId path:path offset:[NSNumber numberWithInteger:0] limit:nil];
     /*
      Top Interface
      */
@@ -565,18 +563,18 @@
     /* Top Users*/
 //        NSString *orderBy = @"group_count";
 //        [restclient topUsers:orderBy];
-//        [restclient topUsers:orderBy usingOffset:YES offset:0 usingLimit:NO limit:NO];
+//    [restclient topUsers:orderBy offset:[NSNumber numberWithInteger:0] limit:nil];
     
     /* Top Groups */
 //        NSString *orderBy = @"user_count";
 //        [restclient topGroups:orderBy];
-//        [restclient topGroups:orderBy usingOffset:YES offset:0 usingLimit:NO limit:NO];
+//    [restclient topGroups:orderBy offset:[NSNumber numberWithInteger:0] limit:nil];
     
     /* Top Files */
 //        NSString *orderBy = @"comment_count";
 //        NSString *rootId = @"42q89f12i2za";
 //        [restclient topFiles:orderBy rootId:rootId];
-//        [restclient topFiles:orderBy rootId:rootId usingOffset:YES offset:0 usingLimit:NO limit:0];
+//    [restclient topFiles:orderBy rootId:rootId offset:[NSNumber numberWithInteger:0] limit:nil];
     
 }
 
@@ -806,7 +804,7 @@
 {
     NSLog(@"Get User Avatar Succeed! %@", avatar);
     if (avatar) {
-        NSMutableString *tmpPath = NSTemporaryDirectory();
+        NSString *tmpPath = NSTemporaryDirectory();
         NSString *tmpAvatarFilePath = [tmpPath stringByAppendingPathComponent:@"tmpAvatar"];
         [avatar writeToFile:tmpAvatarFilePath atomically:YES];
     }

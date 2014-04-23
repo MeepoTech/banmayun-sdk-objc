@@ -1,9 +1,8 @@
 //
 //  BMYRequest.h
-//  BanMaYunSDK
+//  BanmayunSDK
 //
-//  Created by MeePoTech on 14-4-4.
-//  Copyright (c) 2014年 MeePoTech. All rights reserved.
+//  Copyright (c) 2014年 Banmayun. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -61,7 +60,7 @@
 
 /*
  If there is no error, it will parse the response as JSON and make sure the JSON object is the correct
- type. If not, it will set the error object with an error code of MPErrorInvalidResponse
+ type. If not, it will set the error object with an error code of BMYErrorInvalidResponse
  */
 - (id)parseResponseAsType:(Class)cls;
 

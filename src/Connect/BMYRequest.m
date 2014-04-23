@@ -1,9 +1,8 @@
 //
 //  BMYRequest.m
-//  BanMaYunSDK
+//  BanmayunSDK
 //
-//  Created by MeePoTech on 14-4-4.
-//  Copyright (c) 2014年 MeePoTech. All rights reserved.
+//  Copyright (c) 2014年 Banmayun. All rights reserved.
 //
 
 #import "BMYRequest.h"
@@ -249,11 +248,11 @@ id<BMYNetworkRequestDelegate> bmyNetworkRequestDelegate = nil;
             BMYLogError(@"BMYRequest#connectionDidFinishLoading: error getting file attrs: %@", moveError);
             [fileManager removeItemAtPath:tempFilename error:nil];
             [self setError:[NSError errorWithDomain:moveError.domain code:moveError.code userInfo:self.userInfo]];
-        }else if([self responseBodySize] != 0 && [self responseBodySize] != [fileAttrs fileSize]){
+        } else if ([self responseBodySize] != 0 && [self responseBodySize] != [fileAttrs fileSize]) {
             // This happens in iOS 4.0 when the network connection changes while loading
             [fileManager removeItemAtPath:tempFilename error:nil];
             [self setError:[NSError errorWithDomain:BMYErrorDomain code:BMYErrorGenericError userInfo:self.userInfo]];
-        }else{
+        } else {
             // Everything is OK, move temp file over to desired file
             [fileManager removeItemAtPath:resultFilename error:nil];
             
@@ -261,7 +260,8 @@ id<BMYNetworkRequestDelegate> bmyNetworkRequestDelegate = nil;
                                                 toPath:resultFilename
                                                  error:&moveError];
             if (!success) {
-                BMYLogError(@"BMYRequest#connectionDidFinishLoading: error moving temp file to desire location: %@", [moveError localizedDescription]);
+                BMYLogError(@"BMYRequest#connectionDidFinishLoading: error moving temp file to desire location: %@",
+                            [moveError localizedDescription]);
                 [self setError:[NSError errorWithDomain:moveError.domain
                                                    code:moveError.code
                                                userInfo:self.userInfo]];
@@ -291,7 +291,8 @@ id<BMYNetworkRequestDelegate> bmyNetworkRequestDelegate = nil;
         BOOL success = [fileManager removeItemAtPath:tempFilename
                                                error:&removeError];
         if (!success) {
-            BMYLogError(@"BMYRequest#connection:didFailWithError: error removing temporary file: %@", [removeError localizedDescription]);
+            BMYLogError(@"BMYRequest#connection:didFailWithError: error removing temporary file: %@",
+                        [removeError localizedDescription]);
         }
         tempFilename = nil;
     }
@@ -350,22 +351,11 @@ totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite
     
     if (!([error.domain isEqual:BMYErrorDomain] && error.code == HTTP_CONTENT_NOT_MODIFIED_ERROR_CODE)) {
         // Log errors unless they're 304's
-        BMYLogError(@"BanMaYunSDK: error making request to %@ - (%ld) %@", [[request URL] path], (long)error.code, errorStr);
+        BMYLogError(@"BanMaYunSDK: error making request to %@ - (%ld) %@",
+                    [[request URL] path], (long)error.code, errorStr);
     }
 }
 
-//- (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace
-//{
-//    return [protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust];
-//}
-//
-//- (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
-//{
-//    if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust])
-//        [challenge.sender useCredential:[NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]
-//             forAuthenticationChallenge:challenge];
-//    [challenge.sender continueWithoutCredentialForAuthenticationChallenge:challenge];
-//}
 
 //
 // Called on SSL handshake
@@ -378,51 +368,53 @@ totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite
     
     // Check the authentication method for connection: only SSL/TLS is allowed
     if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
-        // Validate host's certificates against MeePo certificate authorities
+        // Validate host's certificates against Banmayun certificate authorities
         SecTrustRef serverTrust = [[challenge protectionSpace] serverTrust];
         SecTrustSetAnchorCertificates(serverTrust, (__bridge CFArrayRef)[BMYRequest rootCertificates]);
         SecTrustResultType trustResult = kSecTrustResultInvalid;
         SecTrustEvaluate(serverTrust, &trustResult);
         if (trustResult == kSecTrustResultUnspecified) {
             // Certificate validation succeeded. Continue the connection
-            [challenge.sender useCredential:[NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust] forAuthenticationChallenge:challenge];
-        }else{
+            [challenge.sender useCredential:[NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]
+                 forAuthenticationChallenge:challenge];
+        } else {
             // Certificate validation failed. Terminate the connection
             BMYLogError(@"BanMaYunSDK: SSL Error. Cannot validate a certificate for the host: %@", host);
             [[challenge sender] cancelAuthenticationChallenge:challenge];
         }
-    }else{
+    } else {
         // Disallowed authentication method. Terminate the connection. Assuming an SSL failure is
         // the safest option here
-        BMYLogError(@"BanMaYunSDK: SSL error. Unknown authentication method %@ for MeePo host: %@", challenge.protectionSpace.authenticationMethod, host);
+        BMYLogError(@"BanMaYunSDK: SSL error. Unknown authentication method %@ for Banmayun host: %@",
+                    challenge.protectionSpace.authenticationMethod, host);
         [[challenge sender] cancelAuthenticationChallenge:challenge];
         
     }
 }
 
 
-// Static method returning NSArray with MeePo root certificates
+// Static method returning NSArray with root certificates
 
 + (NSArray *)rootCertificates
 {
     if (sRootCerts != NULL) {
         return sRootCerts;
     }
-    @synchronized([BMYRequest class]){
-        if(sRootCerts == NULL){
+    @synchronized([BMYRequest class]) {
+        if (sRootCerts == NULL) {
             NSMutableArray *certs = [NSMutableArray array];
-            for(int i = 0; i < kNumRootCerts; i++){
+            for(int i = 0; i < kNumRootCerts; i++) {
                 size_t base64CertLen = strnlen(kBase64RootCerts[i], kMaxCertLen);
                 size_t derCertLen = DBEstimateBas64DecodedDataSize(base64CertLen);
                 char derCert[derCertLen];
                 bool success = DBBase64DecodeData(kBase64RootCerts[i], base64CertLen, derCert, &derCertLen);
-                if(!success){
+                if (!success) {
                     BMYLogError(@"Root certificate base64 decoding failed!");
                     continue;
                 }
                 CFDataRef rawCert = CFDataCreate(kCFAllocatorDefault, (const UInt8 *)derCert, derCertLen);
                 SecCertificateRef cert = SecCertificateCreateWithData(kCFAllocatorDefault, rawCert);
-                if(cert == NULL){
+                if (cert == NULL) {
                     BMYLogError(@"Invalid root certificate!");
                     CFRelease(rawCert);
                     continue;

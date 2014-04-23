@@ -1,9 +1,8 @@
 //
 //  BMYRestClient.h
-//  BanMaYunSDK
+//  BanmayunSDK
 //
-//  Created by MeePoTech on 14-4-4.
-//  Copyright (c) 2014年 MeePoTech. All rights reserved.
+//  Copyright (c) 2014年 Banmayun. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -56,7 +55,11 @@
  */
 
 // Sign In
-- (void)signInWithUsername:(NSString *)username passwd:(NSString *)password linkName:(NSString *)linkname linkDevice:(NSString *)linkDevice ldapName:(NSString *)ldapname;
+- (void)signInWithUsername:(NSString *)username
+                    passwd:(NSString *)password
+                  linkName:(NSString *)linkname
+                linkDevice:(NSString *)linkDevice
+                  ldapName:(NSString *)ldapname;
 
 // Sign Out
 - (void)signOut;
@@ -82,7 +85,7 @@
 
 // List User Links
 - (void)listUserLinks:(NSString *)userId;
-- (void)listUserLinks:(NSString *)userId usingOffset:(BOOL)usingOffset offset:(NSInteger)offset usingLimit:(BOOL)usingLimit limit:(NSInteger)limit;
+- (void)listUserLinks:(NSString *)userId offset:(NSNumber *)offset limit:(NSNumber *)limit;
 
 
 // Delete User Link
@@ -101,7 +104,14 @@
 - (void)existsUser:(NSString *)name email:(NSString *)email;
 
 // Create User
-- (void)createUser:(NSString *)name password:(NSString *)password email:(NSString *)email displayName:(NSString *)displayName isFromAdmin:(BOOL)isAdmin source:(NSString *)source usingGroupsCanOwn:(BOOL)usingGroupsCanOwn groupsCanOwn:(NSInteger)groupsCanOwn role:(BMYUserRole *)role;
+- (void)createUser:(NSString *)name
+          password:(NSString *)password
+             email:(NSString *)email
+       displayName:(NSString *)displayName
+            source:(NSString *)source
+      groupsCanOwn:(NSNumber *)groupsCanOwn
+              role:(BMYUserRole *)role;
+
 
 // Get User
 - (void)getUser:(NSString *)userId;
@@ -109,10 +119,20 @@
 
 // List Users
 - (void)listUsers;
-- (void)listUsers:(NSString *)role usingIsActivated:(BOOL)usingIsActivated isActivated:(BOOL)isActivated usingIsBlocked:(BOOL)usingIsBlocked isBlocked:(BOOL)isBlocked usingOffset:(BOOL)usingOffset offset:(NSInteger)offset usingLimit:(BOOL)usingLimit limit:(NSInteger)limit;
+- (void)listUsers:(NSString *)role
+      isActivated:(NSNumber *)isActivated
+        isBlocked:(NSNumber *)isBlocked
+           offset:(NSNumber *)offset
+            limit:(NSNumber *)limit;
+
 
 // Update User
-- (void)updateUser:(NSString *)aUserId displayName:(NSString *)displayName isFromAdmin:(BOOL)isAdmin usingGroupsCanOwn:(BOOL)usingGroupsCanOwn groupsCanOwn:(NSInteger)groupsCanOwn role:(BMYUserRole *)role usingIsBlocked:(BOOL)usingIsBlocked isBlocked:(BOOL)isBlocked;
+- (void)updateUser:(NSString *)aUserId
+       displayName:(NSString *)displayName
+      groupsCanOwn:(NSNumber *)groupsCanOwn
+              role:(BMYUserRole *)role
+         isBlocked:(NSNumber *)isBlocked;
+
 
 
 // Verify User Email
@@ -140,20 +160,33 @@
  */
 
 // Add User Group
-- (void)addUserGroup:(NSString *)aUserId groupId:(NSString *)groupId remarks:(NSString *)remarks isFromAdmin:(BOOL)isAdmin role:(BMYRelationRole *)role;
+- (void)addUserGroup:(NSString *)aUserId
+             groupId:(NSString *)groupId
+             remarks:(NSString *)remarks
+                role:(BMYRelationRole *)role;
 
 // Get User Group
 - (void)getUserGroup:(NSString *)aUserId groupId:(NSString *)groupId;
 
 
 // List User Groups
-- (void)listUserGroups:(NSString *)aUserId role:(NSString *)role usingIsActivatedParam:(BOOL)usingIsActiveOrNot isActivated:(BOOL)isActivated usingIsBlockedParam:(BOOL)usingIsBlockedOrNot isBlocked:(BOOL)isBlocked usingOffsetParam:(BOOL)usingOffsetOrNot offset:(NSInteger)offset usingLimitParam:(BOOL)usingLimitOrNot limit:(NSInteger)limit;
+- (void)listUserGroups:(NSString *)aUserId
+                  role:(NSString *)role
+           isActivated:(NSNumber *)isActivated
+             isBlocked:(NSNumber *)isBlocked
+                offset:(NSNumber *)offset
+                 limit:(NSNumber *)limit;
+
 - (void)listUserGroups:(NSString *)aUserId role:(NSString *)role;
 - (void)listUserGroups:(NSString *)aUserId;
 
 
 // Update User Group
-- (void)updateUserGroup:(NSString *)aUserId groupId:(NSString *)groupId role:(BMYRelationRole *)role usingIsActivated:(BOOL)usingIsActivedOrNot isActivated:(BOOL)isActivated usingIsBlocked:(BOOL)usingIsBlockedOrNot isBlocked:(BOOL)isBlocked;
+- (void)updateUserGroup:(NSString *)aUserId
+                groupId:(NSString *)groupId
+                   role:(BMYRelationRole *)role
+            isActivated:(NSNumber *)isActivated
+              isBlocked:(NSNumber *)isBlocked;
 - (void)updateUserGroup:(NSString *)aUserId groupId:(NSString *)groupId;
 
 
@@ -169,8 +202,17 @@
 - (void)existsGroup:(NSString *)name;
 
 // Create Group
-- (void)createGroup:(NSString *)name type:(BMYGroupType *)groupType isVisible:(BOOL)isVisible intro:(NSString *)introduction tags:(NSString *)tags announce:(NSString *)announce isFromAdmin:(BOOL)isAdmin ownerId:(NSString *)ownerId source:(NSString *)source;
-- (void)createGroup:(NSString *)name type:(BMYGroupType *)groupType isVisible:(BOOL)isVisible;
+- (void)createGroup:(NSString *)name
+               type:(BMYGroupType *)groupType
+          isVisible:(NSNumber *)isVisible
+              intro:(NSString *)introduction
+               tags:(NSString *)tags
+           announce:(NSString *)announce
+            ownerId:(NSString *)ownerId
+             source:(NSString *)source;
+- (void)createGroup:(NSString *)name
+               type:(BMYGroupType *)groupType
+          isVisible:(NSNumber *)isVisible;
 
 
 
@@ -179,13 +221,31 @@
 
 
 // List Groups
-- (void)listGroups:(NSString *)type usingIsActivated:(BOOL)usingIsActivatedOrNot isAcivated:(BOOL)isActivated usingIsBlocked:(BOOL)usingIsBlockedOrNot isBlocked:(BOOL)isBlocked usingOffset:(BOOL)usingOffsetOrNot offset:(NSInteger)offset usingLimit:(BOOL)usingLimitOrNot limit:(NSInteger)limit;
+- (void)listGroups:(NSString *)type
+        isAcivated:(NSNumber *)isActivated
+         isBlocked:(NSNumber *)isBlocked
+            offset:(NSNumber *)offset
+             limit:(NSNumber *)limit;
 - (void)listGroups;
 
+
+
 // Update Group
-- (void)updateGroup:(NSString *)groupId type:(BMYGroupType *)type isVisible:(BOOL)isVisible intro:(NSString *)intro tags:(NSString *)tags announce:(NSString *)announce isFromAdmin:(BOOL)isAdmin usingIsBlocked:(BOOL)usingIsBlocked isBlocked:(BOOL)isBlocked;
-- (void)updateGroup:(NSString *)groupId type:(BMYGroupType *)type isVisible:(BOOL)isVisible isFromAdmin:(BOOL)isAdmin usingIsBlocked:(BOOL)usingIsBlocked isBlocked:(BOOL)isBlocked;
-- (void)updateGroup:(NSString *)groupId type:(BMYGroupType *)type isVisible:(BOOL)isVisible;
+- (void)updateGroup:(NSString *)groupId
+               type:(BMYGroupType *)type
+          isVisible:(NSNumber *)isVisible
+              intro:(NSString *)intro
+               tags:(NSString *)tags
+           announce:(NSString *)announce
+          isBlocked:(NSNumber *)isBlocked;
+- (void)updateGroup:(NSString *)groupId
+               type:(BMYGroupType *)type
+          isVisible:(NSNumber *)isVisible
+          isBlocked:(NSNumber *)isBlocked;
+
+- (void)updateGroup:(NSString *)groupId
+               type:(BMYGroupType *)type
+          isVisible:(NSNumber *)isVisible;
 
 // Delete Group
 - (void)deleteGroup:(NSString *)groupId;
@@ -212,11 +272,22 @@
 - (void)getGroupUser:(NSString *)groupId userId:(NSString *)aUserId;
 
 // List Group Users
-- (void)listGroupUsers:(NSString *)groupId role:(NSString *)role usingIsActivated:(BOOL)usingIsActivatedOrNot isActivated:(BOOL)isActivated usingIsBlocked:(BOOL)usingIsBlockedOrNot isBlocked:(BOOL)isBlocked usingOffset:(BOOL)usingOffsetOrNot offset:(NSInteger)offset usingLimit:(BOOL)usingLimitOrNot limit:(NSInteger)limit;
+- (void)listGroupUsers:(NSString *)groupId
+                  role:(NSString *)role
+           isActivated:(NSNumber *)isActivated
+             isBlocked:(NSNumber *)isBlocked
+                offset:(NSNumber *)offset
+                 limit:(NSNumber *)limit;
+
 - (void)listGroupUsers:(NSString *)groupId;
 
 // Update Group User
-- (void)updateGroupUser:(NSString *)groupId userId:(NSString *)aUserId role:(BMYRelationRole *)role usingIsActived:(BOOL)usingIsActived isActivated:(BOOL)isActivated usingIsBlocked:(BOOL)usingIsBlocked isBlocked:(BOOL)isBlocked;
+- (void)updateGroupUser:(NSString *)groupId
+                 userId:(NSString *)aUserId
+                   role:(BMYRelationRole *)role
+            isActivated:(NSNumber *)isActivated
+              isBlocked:(NSNumber *)isBlocked;
+
 - (void)updateGroupUser:(NSString *)groupId userId:(NSString *)aUserId;
 
 // Remove Group User
@@ -232,7 +303,15 @@
 - (void)getRoot:(NSString *)rootId;
 
 // Set Default Permission
-- (void)setDefaultPermission:(NSString *)rootId insertableToOwner:(BOOL)insertableToOwner readableToOwner:(BOOL)readableToOwner writableToOwner:(BOOL)writableToOwner deletableToOwner:(BOOL)deletableToOwner insertableToOthers:(BOOL)insertableToOthers readableToOthers:(BOOL)readableToOthers writableToOthers:(BOOL)writableToOthers deletableToOthers:(BOOL)deletableToOthers;
+- (void)setDefaultPermission:(NSString *)rootId
+           insertableToOwner:(NSNumber *)insertableToOwner
+             readableToOwner:(NSNumber *)readableToOwner
+             writableToOwner:(NSNumber *)writableToOwner
+            deletableToOwner:(NSNumber *)deletableToOwner
+          insertableToOthers:(NSNumber *)insertableToOthers
+            readableToOthers:(NSNumber *)readableToOthers
+            writableToOthers:(NSNumber *)writableToOthers
+           deletableToOthers:(NSNumber *)deletableToOthers;
 
 // Set Root Quota
 - (void)setRootQuota:(NSString *)aRootId quota:(NSString *)quota;
@@ -244,11 +323,23 @@
  File Interface (By Path)
  */
 // Put File By Path
-- (void)putFileByPathWithRootId:(NSString *)rootId  path:(NSString *)path modifiedAtMillis:(long)modifiedAtMillis usingOverwrite:(BOOL)usingOverWrite overwrite:(BOOL)overwrite fromPath:(NSString *)sourcePath;
+- (void)putFileByPathWithRootId:(NSString *)rootId
+                           path:(NSString *)path
+               modifiedAtMillis:(NSNumber *)modifiedAtMillis
+                      overwrite:(NSNumber *)overwrite
+                       fromPath:(NSString *)sourcePath;
 
 // Get File By Path
-- (void)getFileByPathWithRootId:(NSString *)rootId path:(NSString *)path usingVersion:(BOOL)usingVersion version:(long)version usingOffset:(BOOL)usingOffset offset:(long)offset usingBytes:(BOOL)usingBytes bytes:(long)bytes toPath:(NSString *)toPath;
-- (void)getFileBypathWithRootId:(NSString *)rootId path:(NSString *)path toPath:(NSString *)toPath;
+- (void)getFileByPathWithRootId:(NSString *)rootId
+                           path:(NSString *)path
+                        version:(NSNumber *)version
+                         offset:(NSNumber *)offset
+                          bytes:(NSNumber *)bytes
+                         toPath:(NSString *)toPath;
+
+- (void)getFileBypathWithRootId:(NSString *)rootId
+                           path:(NSString *)path
+                         toPath:(NSString *)toPath;
 
 
 // Trash File By Path
@@ -260,11 +351,21 @@
  */
 
 // Upload File By Id
-- (void)uploadFileByIdWithRootId:(NSString *)rootId metaId:(NSString *)metaId modifiedAtMillis:(long)modifiedAtMillis fromPath:(NSString *)sourcePath;
+- (void)uploadFileByIdWithRootId:(NSString *)rootId
+                          metaId:(NSString *)metaId
+                modifiedAtMillis:(NSNumber *)modifiedAtMillis
+                        fromPath:(NSString *)sourcePath;
+
 
 // Get File By Id
 - (void)getFileByIdWithRootId:(NSString *)rootId metaId:(NSString *)metaId toPath:(NSString *)toPath;
-- (void)getFileByIdWithRootId:(NSString *)rootId metaId:(NSString *)metaId usingVersion:(BOOL)usingVersion version:(long)version usingOffset:(BOOL)usingOffset offset:(long)offset usingBytes:(BOOL)usingBytes bytes:(long)bytes toPath:(NSString *)toPath;
+- (void)getFileByIdWithRootId:(NSString *)rootId
+                       metaId:(NSString *)metaId
+                      version:(NSNumber *)version
+                       offset:(NSNumber *)offset
+                        bytes:(NSNumber *)bytes
+                       toPath:(NSString *)toPath;
+
 
 
 // Trash File By Id
@@ -274,11 +375,17 @@
 - (void)getFileMetaWithRootId:(NSString *)rootId metaId:(NSString *)metaId;
 
 // Get File Thumbnail
-- (void)getFileThumbnailWithRootId:(NSString *)rootId metaId:(NSString *)metaId format:(NSString *)format size:(NSString *)size toPath:(NSString *)toPath;
+- (void)getFileThumbnailWithRootId:(NSString *)rootId
+                            metaId:(NSString *)metaId
+                            format:(NSString *)format
+                              size:(NSString *)size
+                            toPath:(NSString *)toPath;
 
 // List File Revisions
-- (void)listFileRevisionsWithRootId:(NSString *)rootId metaId:(NSString *)metaId usingOffset:(BOOL)usingOffset offset:(NSInteger)offset usingLimit:(BOOL)usingLimit limit:(NSInteger)limit;
-
+- (void)listFileRevisionsWithRootId:(NSString *)rootId
+                             metaId:(NSString *)metaId
+                             offset:(NSNumber *)offset
+                              limit:(NSNumber *)limit;
 
 
 /*
@@ -292,7 +399,11 @@
 - (void)getComment:(NSString *)rootId metaId:(NSString *)metaId commentId:(NSString *)commentId;
 
 // List Comments
-- (void)listComments:(NSString *)rootId metaId:(NSString *)metaId usingOffset:(BOOL)usingOffset offset:(NSInteger)offset usingLimit:(BOOL)usingLimit limit:(NSInteger)limit;
+- (void)listComments:(NSString *)rootId
+              metaId:(NSString *)metaId
+              offset:(NSNumber *)offset
+               limit:(NSNumber *)limit;
+
 - (void)listComments:(NSString *)rootId metaId:(NSString *)metaId;
 
 // Delete Comment
@@ -309,13 +420,16 @@
  */
 
 // Create Share
-- (void)createShare:(NSString *)rootId metaId:(NSString *)metaId password:(NSString *)passwd expiresAt:(long)expiresAt;
+- (void)createShare:(NSString *)rootId metaId:(NSString *)metaId password:(NSString *)passwd expiresAt:(NSNumber *)expiresAt;
 
 // Get Share
 - (void)getShare:(NSString *)rootId metaId:(NSString *)metaId shareId:(NSString *)shareId;
 
 // List Shares
-- (void)listShares:(NSString *)rootId metaId:(NSString *)metaId usingOffset:(BOOL)usingOffset offset:(NSInteger)offset usingLimit:(BOOL)usingLimit limit:(NSInteger)limit;
+- (void)listShares:(NSString *)rootId
+            metaId:(NSString *)metaId
+            offset:(NSNumber *)offset
+             limit:(NSNumber *)limit;
 - (void)listShares:(NSString *)rootId metaId:(NSString *)metaId;
 
 // Delete Share
@@ -331,16 +445,19 @@
  */
 
 // Fileops Commit Chunked Upload
-- (void)commitChunkedUploadWithRootId:(NSString *)rootId path:(NSString *)path uploadId:(NSString *)uploadId modifiedAtMillis:(long)modifiedAtMillis;
+- (void)commitChunkedUploadWithRootId:(NSString *)rootId
+                                 path:(NSString *)path
+                             uploadId:(NSString *)uploadId
+                     modifiedAtMillis:(NSNumber *)modifiedAtMillis;
 
 // Fileops Copy
 - (void)copyFileWithRootId:(NSString *)rootId path:(NSString *)path toPath:(NSString *)toPath;
 
 // Fileops Create Folder
-- (void)createFolderWithRootId:(NSString *)rootId path:(NSString *)path modifiedAtMillis:(long)modifiedAtMillis;
+- (void)createFolderWithRootId:(NSString *)rootId path:(NSString *)path modifiedAtMillis:(NSNumber *)modifiedAtMillis;
 
 // Fileops Get Meta
-- (void)getMetaOfFileOpsWithRootId:(NSString *)rootId path:(NSString *)path list:(BOOL)list;
+- (void)getMetaOfFileOpsWithRootId:(NSString *)rootId path:(NSString *)path isListDirContent:(NSNumber *)isListDirContent;
 
 // Fileops List Folder
 - (void)listFolderOfFileOpsWithRootId:(NSString *)rootId path:(NSString *)path;
@@ -349,16 +466,32 @@
 - (void)moveOfFileOpsWithRootId:(NSString *)rootId path:(NSString *)path toPath:(NSString *)toPath;
 
 // Fileops Rollback
-- (void)rollbackOfFileOpsWithRootId:(NSString *)rootId path:(NSString *)path toVersion:(long)toVersion;
+- (void)rollbackOfFileOpsWithRootId:(NSString *)rootId path:(NSString *)path toVersion:(NSNumber *)toVersion;
+
 
 // Fileops thunder upload
-- (void)thunderUploadOfFileOpsWithRootId:(NSString *)rootId path:(NSString *)path md5:(NSString *)md5 bytes:(long)bytes modifiedAtMillis:(long)modifiedAtMillis;
+- (void)thunderUploadOfFileOpsWithRootId:(NSString *)rootId
+                                    path:(NSString *)path
+                                     md5:(NSString *)md5
+                                   bytes:(NSNumber *)bytes
+                        modifiedAtMillis:(NSNumber *)modifiedAtMillis;
+
 
 // Fileops Utime Folder
-- (void)utimeFolderOfFileOpsWithRootId:(NSString *)rootId path:(NSString *)path  modifiedAtMillis:(long)modifiedAtMillis;
+- (void)utimeFolderOfFileOpsWithRootId:(NSString *)rootId path:(NSString *)path  modifiedAtMillis:(NSNumber *)modifiedAtMillis;
 
 // Fileops Set Permission
-- (void)setPermissionOfFileOpsWithRootId:(NSString *)rootId path:(NSString *)path insertableToOwner:(BOOL)insertableOwner readableToOwner:(BOOL)readableOwner writableToOwner:(BOOL)writableOwner deletableToOwner:(BOOL)deletableOwner insertableToOthers:(BOOL)insertableOthers readableToOthers:(BOOL)readableOthers writableToOthers:(BOOL)writableOthers deletableToOthers:(BOOL)deletableOthers;
+- (void)setPermissionOfFileOpsWithRootId:(NSString *)rootId
+                                    path:(NSString *)path
+                       insertableToOwner:(NSNumber *)insertableOwner
+                         readableToOwner:(NSNumber *)readableOwner
+                         writableToOwner:(NSNumber *)writableOwner
+                        deletableToOwner:(NSNumber *)deletableOwner
+                      insertableToOthers:(NSNumber *)insertableOthers
+                        readableToOthers:(NSNumber *)readableOthers
+                        writableToOthers:(NSNumber *)writableOthers
+                       deletableToOthers:(NSNumber *)deletableOthers;
+
 
 // Fileops List Permission
 - (void)listPermissionsOfFileOpsWithRootId:(NSString *)rootId;
@@ -368,8 +501,9 @@
  */
 
 // Chunked Upload
-- (void)chunkedUploadWithUploadId:(NSString *)uploadId usingOffset:(BOOL)usingOffset offset:(long)offset fromPath:(NSString *)localPath;
-
+- (void)chunkedUploadWithUploadId:(NSString *)uploadId
+                           offset:(NSNumber *)offset
+                         fromPath:(NSString *)localPath;
 
 /* 
  Trash Interface 
@@ -379,7 +513,9 @@
 - (void)getTrash:(NSString *)rootId trashId:(NSString *)trashId;
 
 // List Trashes
-- (void)listTrashes:(NSString *)rootId usingOffset:(BOOL)usingOffset offset:(NSInteger)offset usingLimit:(BOOL)usingLimit limit:(NSInteger)limit;
+- (void)listTrashes:(NSString *)rootId
+             offset:(NSNumber *)offset
+              limit:(NSNumber *)limit;
 - (void)listTrashes:(NSString *)rootId;
 
 // Delete Trash
@@ -398,17 +534,27 @@
  */
 
 // Search Users
-- (void)searchUsers:(NSString *)query groupId:(NSString *)groupId usingOffset:(BOOL)usingOffset offset:(NSInteger)offset usingLimit:(BOOL)usingLimit limit:(NSInteger)limit;
+- (void)searchUsers:(NSString *)query
+            groupId:(NSString *)groupId
+             offset:(NSNumber *)offset
+              limit:(NSNumber *)limit;
 - (void)searchUsers:(NSString *)query groupId:(NSString *)groupId;
 - (void)searchUsers:(NSString *)query;
 
 // Search Groups
-- (void)searchGroups:(NSString *)query userId:(NSString *)aUserId usingOffset:(BOOL)usingOffset offset:(NSInteger)offset usingLimit:(BOOL)usingLimit limit:(NSInteger)limit;
+- (void)searchGroups:(NSString *)query
+              userId:(NSString *)aUserId
+              offset:(NSNumber *)offset
+               limit:(NSNumber *)limit;
 - (void)searchGroups:(NSString *)query userId:(NSString *)aUserId;
 - (void)searchGroups:(NSString *)query;
 
 // Search Files
-- (void)searchFiles:(NSString *)query rootId:(NSString *)rootId path:(NSString *)path usingOffset:(BOOL)usingOffset offset:(NSInteger)offset usingLimit:(BOOL)usingLimit limit:(NSInteger)limit;
+- (void)searchFiles:(NSString *)query
+             rootId:(NSString *)rootId
+               path:(NSString *)path
+             offset:(NSNumber *)offset
+              limit:(NSNumber *)limit;
 - (void)searchFiles:(NSString *)query rootId:(NSString *)rootId path:(NSString *)path;
 - (void)searchFiles:(NSString *)query;
 
@@ -418,15 +564,22 @@
  */
 
 // Top Users
-- (void)topUsers:(NSString *)orderBy usingOffset:(BOOL)usingOffset offset:(NSInteger)offset usingLimit:(BOOL)usingLimit limit:(NSInteger)limit;
+- (void)topUsers:(NSString *)orderBy
+          offset:(NSNumber *)offset
+           limit:(NSNumber *)limit;
 - (void)topUsers:(NSString *)orderBy;
 
 // Top Groups
-- (void)topGroups:(NSString *)orderBy usingOffset:(BOOL)usingOffset offset:(NSInteger)offset usingLimit:(BOOL)usingLimit limit:(NSInteger)limit;
+- (void)topGroups:(NSString *)orderBy
+           offset:(NSNumber *)offset
+            limit:(NSNumber *)limit;
 - (void)topGroups:(NSString *)orderBy;
 
 // Top Files
-- (void)topFiles:(NSString *)orderBy rootId:(NSString *)rootId usingOffset:(BOOL)usingOffset offset:(NSInteger)offset usingLimit:(BOOL)usingLimit limit:(NSInteger)limit;
+- (void)topFiles:(NSString *)orderBy
+          rootId:(NSString *)rootId
+          offset:(NSNumber *)offset
+           limit:(NSNumber *)limit;
 - (void)topFiles:(NSString *)orderBy rootId:(NSString *)rootId;
 
 
@@ -623,14 +776,30 @@
 
 
 /* Put File by Path*/
-- (void)restClient:(BMYRestClient *)restClient donePutFileByPathWithRootId:(NSString *)rootId path:(NSString *)destPath fromPath:(NSString *)srcPath metadata:(BMYMetadata *)metadata;
-- (void)restClient:(BMYRestClient *)restClient putFileProgress:(CGFloat)progress forRootId:(NSString *)rootId path:(NSString *)destPath fromPath:(NSString *)srcPath;
+- (void)restClient:(BMYRestClient *)restClient
+donePutFileByPathWithRootId:(NSString *)rootId
+              path:(NSString *)destPath
+          fromPath:(NSString *)srcPath
+          metadata:(BMYMetadata *)metadata;
+
+- (void)restClient:(BMYRestClient *)restClient
+   putFileProgress:(CGFloat)progress
+         forRootId:(NSString *)rootId
+              path:(NSString *)destPath
+          fromPath:(NSString *)srcPath;
+
 - (void)restClient:(BMYRestClient *)restClient putFileFailedWithError:(NSError *)error;
 
 /* Get File by Path */
 - (void)restClient:(BMYRestClient *)restClient gotFileByPathToPath:(NSString *)toPath;
-   // Implement the following callback instead of the previous if you care about the value of the Content-Type HTTP header and the file metadata. Only one will be called per successful response.
-- (void)restClient:(BMYRestClient *)restClient gotFileByPathToPath:(NSString *)toPath contentType:(NSString *)contentType metadata:(BMYMetadata *)metadata;
+
+// Implement the following callback instead of the previous if you care about the value of the Content-Type HTTP header
+// and the file metadata. Only one will be called per successful response.
+- (void)restClient:(BMYRestClient *)restClient
+gotFileByPathToPath:(NSString *)toPath
+       contentType:(NSString *)contentType
+          metadata:(BMYMetadata *)metadata;
+
 - (void)restClient:(BMYRestClient *)restClient getFileByPathProgress:(CGFloat)progress forFile:(NSString *)toPath;
 - (void)restClient:(BMYRestClient *)restClient getFileByPathFailedWithError:(NSError *)error;
 
@@ -641,17 +810,33 @@
 
 
 /* Upload File by id */
-- (void)restClient:(BMYRestClient *)restClient uploadedFileByIdForRootId:(NSString *)rootId metaId:(NSString *)metaId fromPath:(NSString *)srcPath metadata:(BMYMetadata *)metadata;
-- (void)restClient:(BMYRestClient *)restClient uploadFileByIdProgress:(CGFloat)progress forRootId:(NSString *)metaId metaId:(NSString *)metaId fromPath:(NSString *)srcPath;
+- (void)restClient:(BMYRestClient *)restClient
+uploadedFileByIdForRootId:(NSString *)rootId
+            metaId:(NSString *)metaId
+          fromPath:(NSString *)srcPath
+          metadata:(BMYMetadata *)metadata;
+
+- (void)restClient:(BMYRestClient *)restClient
+uploadFileByIdProgress:(CGFloat)progress
+         forRootId:(NSString *)metaId
+            metaId:(NSString *)metaId
+          fromPath:(NSString *)srcPath;
 - (void)restClient:(BMYRestClient *)restClient uploadFileByIdFailedWithError:(NSError *)error;
 
 
 /* Get File by id */
 - (void)restClient:(BMYRestClient *)restClient gotFileByIdToPath:(NSString *)toPath;
-// Implement the following callback instead of the previous if you care about the value of the Content-Type HTTP header and the file metadata. Only one will be called per successful response.
-- (void)restClient:(BMYRestClient *)restClient gotFileByIdToPath:(NSString *)toPath contentType:(NSString *)contentType metadata:(BMYMetadata *)metadata;
+
+// Implement the following callback instead of the previous if you care about the value of the Content-Type HTTP header
+// and the file metadata. Only one will be called per successful response.
+- (void)restClient:(BMYRestClient *)restClient
+ gotFileByIdToPath:(NSString *)toPath
+       contentType:(NSString *)contentType
+          metadata:(BMYMetadata *)metadata;
+
 - (void)restClient:(BMYRestClient *)restClient getFileByIdProgress:(CGFloat)progress forFile:(NSString *)toPath;
 - (void)restClient:(BMYRestClient *)restClient getFileByIdFailedWithError:(NSError *)error;
+
 
 /* Trash File by Id */
 - (void)restClient:(BMYRestClient *)restClient trashedFileById:(BMYMetadata *)metadata;
@@ -714,8 +899,17 @@
 - (void)restClient:(BMYRestClient *)restClient listPermissionsOfFileOpsFailedWithError:(NSError *)error;
 
 /* Chunked Upload */
-- (void)restClient:(BMYRestClient *)restClient chunkedUploadProgress:(CGFloat)progress forFile:(NSString *)uploadId offset:(long)offset fromPath:(NSString *)fromPath;
-- (void)restClient:(BMYRestClient *)restClient chunkedUpload:(NSString *)uploadId newOffset:(long)newOffset fromFile:(NSString *)localPath;
+- (void)restClient:(BMYRestClient *)restClient
+chunkedUploadProgress:(CGFloat)progress
+           forFile:(NSString *)uploadId
+            offset:(long)offset
+          fromPath:(NSString *)fromPath;
+
+- (void)restClient:(BMYRestClient *)restClient
+     chunkedUpload:(NSString *)uploadId
+         newOffset:(long)newOffset
+          fromFile:(NSString *)localPath;
+
 - (void)restClient:(BMYRestClient *)restClient chunkedUploadFailedWithError:(NSError *)error;
 
 
