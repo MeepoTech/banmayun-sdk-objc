@@ -5,7 +5,6 @@
 @synthesize millis;
 @synthesize display_value;
 
-
 - (id)initWithDictionary:(NSDictionary *)dict {
     if (self = [super init]) {
         millis = [[dict objectForKey:@"millis"] longLongValue];

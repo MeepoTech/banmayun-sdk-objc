@@ -2,7 +2,6 @@
 
 NSString *BMYJsonErrorDomain = @"com.Banmayun.Json.ErrorDomain";
 
-
 @implementation BMYJsonBase
 
 @synthesize errorTrace;
@@ -30,10 +29,8 @@ NSString *BMYJsonErrorDomain = @"com.Banmayun.Json.ErrorDomain";
         errorTrace = [NSMutableArray new];
         userInfo = [NSDictionary dictionaryWithObject:str forKey:NSLocalizedDescriptionKey];
     } else {
-        userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                    str, NSLocalizedDescriptionKey,
-                    [errorTrace lastObject], NSUnderlyingErrorKey,
-                    nil];
+        userInfo = [NSDictionary dictionaryWithObjectsAndKeys:str, NSLocalizedDescriptionKey, [errorTrace lastObject],
+                                                              NSUnderlyingErrorKey, nil];
     }
 
     NSError *error = [NSError errorWithDomain:BMYJsonErrorDomain code:code userInfo:userInfo];

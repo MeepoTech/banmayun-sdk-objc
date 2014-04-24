@@ -7,7 +7,6 @@
 
 @end
 
-
 @interface NSURL (BMYURLEscapingAdditions)
 
 - (NSString *)stringByAddingURIPercentEscapesUsingEncoding:(NSStringEncoding)inEncoding;

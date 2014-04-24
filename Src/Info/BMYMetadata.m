@@ -30,8 +30,6 @@
 @synthesize permission;
 @synthesize contents;
 
-
-
 - (id)initWithDictionary:(NSDictionary *)dict {
     if (self = [super init]) {
         fileId = [dict objectForKey:@"id"];

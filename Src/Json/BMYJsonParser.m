@@ -21,14 +21,14 @@
 
 @end
 
-#define skipWhitespace(c)	while (isspace(*c)) c++
-#define skipDigits(c)		while (isdigit(*c)) c++
-
+#define skipWhitespace(c) \
+    while (isspace(*c)) c++
+#define skipDigits(c) \
+    while (isdigit(*c)) c++
 
 @implementation BMYJsonParser
 
 static char ctrl[0x22];
-
 
 + (void)initialize {
     ctrl[0] = '\"';
@@ -126,8 +126,8 @@ static char ctrl[0x22];
             break;
 
         case '-':
-        case '0'...'9':
-            c--; // cannot verify number correctly without the first character
+        case '0' ... '9':
+            c--;  // cannot verify number correctly without the first character
             return [self scanNumber:(NSNumber **)o];
 
             break;
@@ -196,7 +196,7 @@ static char ctrl[0x22];
 
     *o = [NSMutableArray arrayWithCapacity:8];
 
-    for (; *c; ) {
+    for (; *c;) {
         id v;
 
         skipWhitespace(c);
@@ -211,7 +211,7 @@ static char ctrl[0x22];
             return NO;
         }
 
-        [*o addObject : v];
+        [*o addObject:v];
 
         skipWhitespace(c);
 
@@ -237,7 +237,7 @@ static char ctrl[0x22];
 
     *o = [NSMutableDictionary dictionaryWithCapacity:7];
 
-    for (; *c; ) {
+    for (; *c;) {
         id k, v;
 
         skipWhitespace(c);
@@ -267,7 +267,7 @@ static char ctrl[0x22];
             return NO;
         }
 
-        [*o setObject : v forKey : k];
+        [*o setObject:v forKey:k];
 
         skipWhitespace(c);
 
@@ -295,12 +295,12 @@ static char ctrl[0x22];
         if (len) {
             // check for
             id t = [[NSString alloc] initWithBytesNoCopy:(char *)c
-                    length								:len
-                    encoding							:NSUTF8StringEncoding
-                    freeWhenDone						:NO];
+                                                  length:len
+                                                encoding:NSUTF8StringEncoding
+                                            freeWhenDone:NO];
 
             if (t) {
-                [*o appendString : t];
+                [*o appendString:t];
                 [t release];
                 c += len;
             }
@@ -317,15 +317,25 @@ static char ctrl[0x22];
                 case '"':
                     break;
 
-                case 'b':   uc = '\b';  break;
+                case 'b':
+                    uc = '\b';
+                    break;
 
-                case 'n':   uc = '\n';  break;
+                case 'n':
+                    uc = '\n';
+                    break;
 
-                case 'r':   uc = '\r';  break;
+                case 'r':
+                    uc = '\r';
+                    break;
 
-                case 't':   uc = '\t';  break;
+                case 't':
+                    uc = '\t';
+                    break;
 
-                case 'f':   uc = '\f';  break;
+                case 'f':
+                    uc = '\f';
+                    break;
 
                 case 'u':
                     c++;
@@ -335,11 +345,12 @@ static char ctrl[0x22];
                         return NO;
                     }
 
-                    c--; // hack.
+                    c--;  // hack.
                     break;
 
                 default:
-                    [self addErrorWithCode:EESCAPE description:[NSString stringWithFormat:@"Illegal escape sequence '0x%x'", uc]];
+                    [self addErrorWithCode:EESCAPE
+                                 description:[NSString stringWithFormat:@"Illegal escape sequence '0x%x'", uc]];
                     return NO;
 
                     break;
@@ -347,7 +358,8 @@ static char ctrl[0x22];
             CFStringAppendCharacters((CFMutableStringRef) * o, &uc, 1);
             c++;
         } else if (*c < 0x20) {
-            [self addErrorWithCode:ECTRL description:[NSString stringWithFormat:@"Unescaped control character '0x%x'", *c]];
+            [self addErrorWithCode:ECTRL
+                         description:[NSString stringWithFormat:@"Unescaped control character '0x%x'", *c]];
             return NO;
         } else {
             NSLog(@"should not be able to get here");
@@ -395,10 +407,9 @@ static char ctrl[0x22];
     for (int i = 0; i < 4; i++) {
         unichar uc = *c;
         c++;
-        int d = (uc >= '0' && uc <= '9')
-                ? uc - '0' : (uc >= 'a' && uc <= 'f')
-                ? (uc - 'a' + 10) : (uc >= 'A' && uc <= 'F')
-                ? (uc - 'A' + 10) : -1;
+        int d = (uc >= '0' && uc <= '9') ? uc - '0' : (uc >= 'a' && uc <= 'f')
+                                                              ? (uc - 'a' + 10)
+                                                              : (uc >= 'A' && uc <= 'F') ? (uc - 'A' + 10) : -1;
 
         if (d == -1) {
             [self addErrorWithCode:EUNICODE description:@"Missing hex digit in quad"];
@@ -462,9 +473,9 @@ static char ctrl[0x22];
     }
 
     id str = [[NSString alloc] initWithBytesNoCopy:(char *)ns
-                length		:c - ns
-                encoding	:NSUTF8StringEncoding
-                freeWhenDone:NO];
+                                            length:c - ns
+                                          encoding:NSUTF8StringEncoding
+                                      freeWhenDone:NO];
     [str autorelease];
 
     if (str && (*o = [NSDecimalNumber decimalNumberWithString:str])) {

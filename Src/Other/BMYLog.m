@@ -5,18 +5,22 @@
 static BMYLogLevel LogLevel = BMYLogLevelWarning;
 static BMYLogCallback *callback = NULL;
 
-
-NSString * BMYStringFromLevel(BMYLogLevel logLevel) {
+NSString *BMYStringFromLevel(BMYLogLevel logLevel) {
     switch (logLevel) {
-        case BMYLogLevelInfo: return @"INFO";
+        case BMYLogLevelInfo:
+            return @"INFO";
 
-        case BMYLogLevelAnalytics: return @"ANALYTICS";
+        case BMYLogLevelAnalytics:
+            return @"ANALYTICS";
 
-        case BMYLogLevelWarning: return @"WARNING";
+        case BMYLogLevelWarning:
+            return @"WARNING";
 
-        case BMYLogLevelError: return @"ERROR";
+        case BMYLogLevelError:
+            return @"ERROR";
 
-        case BMYLogLevelFatal: return @"FATAL";
+        case BMYLogLevelFatal:
+            return @"FATAL";
 
         default:
             break;
@@ -24,7 +28,7 @@ NSString * BMYStringFromLevel(BMYLogLevel logLevel) {
     return @"";
 }
 
-NSString * BMYLogFilePath() {
+NSString *BMYLogFilePath() {
     static NSString *logFilePath;
 
     if (logFilePath == nil) {
@@ -34,21 +38,15 @@ NSString * BMYLogFilePath() {
     return logFilePath;
 }
 
-void BMYSetupLogToFile() {
-    freopen([BMYLogFilePath() fileSystemRepresentation], "w", stderr);
-}
+void BMYSetupLogToFile() { freopen([BMYLogFilePath() fileSystemRepresentation], "w", stderr); }
 
-static NSString * BMYLogFormatPrefix(BMYLogLevel logLevel) {
+static NSString *BMYLogFormatPrefix(BMYLogLevel logLevel) {
     return [NSString stringWithFormat:@"[%@]", BMYStringFromLevel(logLevel)];
 }
 
-void BMYLogSetLevel(BMYLogLevel logLevel) {
-    LogLevel = logLevel;
-}
+void BMYLogSetLevel(BMYLogLevel logLevel) { LogLevel = logLevel; }
 
-void BMYLogSetCallback(BMYLogCallback *acallback) {
-    callback = acallback;
-}
+void BMYLogSetCallback(BMYLogCallback *acallback) { callback = acallback; }
 
 static void BMYLogv(BMYLogLevel logLevel, NSString *format, va_list args) {
     if (logLevel >= LogLevel) {

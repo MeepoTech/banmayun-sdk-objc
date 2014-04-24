@@ -8,7 +8,6 @@
 @synthesize expires_at;
 @synthesize created_at;
 
-
 - (id)initWithDictionary:(NSDictionary *)dict {
     if (self = [super init]) {
         chunkedUploadId = [dict objectForKey:@"id"];

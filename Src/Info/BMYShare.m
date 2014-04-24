@@ -5,7 +5,6 @@
 
 @implementation BMYShare
 
-
 @synthesize shareId;
 @synthesize root_id;
 @synthesize meta_id;
@@ -13,7 +12,6 @@
 @synthesize created_at;
 @synthesize created_by;
 @synthesize meta;
-
 
 - (id)initWithDictionary:(NSDictionary *)dict {
     if (self = [super init]) {

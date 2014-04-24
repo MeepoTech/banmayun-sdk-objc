@@ -6,7 +6,6 @@
 @synthesize offset;
 @synthesize entries;
 
-
 - (id)initWithDictionary:(NSDictionary *)dict {
     if (self = [super init]) {
         total = [[dict objectForKey:@"total"] integerValue];
@@ -15,7 +14,7 @@
         if ([dict objectForKey:@"entries"]) {
             NSMutableArray *tempArray = [[NSMutableArray alloc] initWithCapacity:[dict count]];
 
-            for (id obj in [dict objectForKey : @"entries"]) {
+            for (id obj in [dict objectForKey:@"entries"]) {
                 [tempArray addObject:obj];
             }
 

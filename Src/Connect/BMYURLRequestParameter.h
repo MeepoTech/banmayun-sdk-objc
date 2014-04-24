@@ -1,14 +1,12 @@
 #import <Foundation/Foundation.h>
 
-@interface BMYURLRequestParameter : NSObject
-{
+@interface BMYURLRequestParameter : NSObject {
     NSString *_name;
     NSString *_value;
 }
 
-@property (nonatomic, readwrite, copy) NSString *name;
-@property (nonatomic, readwrite, copy) NSString *value;
-
+@property(nonatomic, readwrite, copy) NSString *name;
+@property(nonatomic, readwrite, copy) NSString *value;
 
 + (NSArray *)parametersFromString:(NSString *)inString;
 + (NSArray *)parametersFromDictionary:(NSDictionary *)inDictionary;

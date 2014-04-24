@@ -38,7 +38,6 @@
 
 @end
 
-
 /**
    @brief The Json writer class.
 
@@ -61,8 +60,8 @@
    way you would expect.
 
  */
-@interface BMYJsonWriter : BMYJsonBase <BMYJsonWriter> {
-    @private
+@interface BMYJsonWriter : BMYJsonBase<BMYJsonWriter> {
+   @private
     BOOL sortKeys, humanReadable;
 }
 

@@ -12,7 +12,6 @@
 @synthesize file_count;
 @synthesize byte_count;
 
-
 - (id)initWithDictionary:(NSDictionary *)dict {
     if (self = [super init]) {
         rootId = [dict objectForKey:@"id"];

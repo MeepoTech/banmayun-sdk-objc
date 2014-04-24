@@ -2,10 +2,8 @@
 
 @implementation BMYGroupType
 
-
 @synthesize name;
 @synthesize display_value;
-
 
 - (id)initWithDictionary:(NSDictionary *)dict {
     if (self = [super init]) {

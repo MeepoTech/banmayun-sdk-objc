@@ -7,15 +7,13 @@
 #import "BMYRequest.h"
 #import "DBBase64Transcoder.h"
 
-
-#define HTTP_RESPONSE_SUC_CODE					200
-#define HTTP_CONTENT_NOT_MODIFIED_ERROR_CODE	304
+#define HTTP_RESPONSE_SUC_CODE 200
+#define HTTP_CONTENT_NOT_MODIFIED_ERROR_CODE 304
 
 static const char *kBase64RootCerts[];
 static const size_t kNumRootCerts;
 static const size_t kMaxCertLen = 10000;
 static const NSMutableArray *volatile sRootCerts = NULL;
-
 
 id<BMYNetworkRequestDelegate> bmyNetworkRequestDelegate = nil;
 
@@ -23,7 +21,7 @@ id<BMYNetworkRequestDelegate> bmyNetworkRequestDelegate = nil;
 
 - (void)setError:(NSError *)error;
 
-@property (nonatomic, strong) NSFileManager *fileManager;
+@property(nonatomic, strong) NSFileManager *fileManager;
 
 @end
 
@@ -65,7 +63,6 @@ id<BMYNetworkRequestDelegate> bmyNetworkRequestDelegate = nil;
 @synthesize resultData;
 @synthesize resultFilename;
 @synthesize error;
-
 
 - (NSString *)resultString {
     return [[NSString alloc] initWithData:resultData encoding:NSUTF8StringEncoding];
@@ -148,7 +145,8 @@ id<BMYNetworkRequestDelegate> bmyNetworkRequestDelegate = nil;
         BOOL success = [fileManager createFileAtPath:tempFilename contents:nil attributes:nil];
 
         if (!success) {
-            BMYLogError(@"BMYRequest#connection:didReceiveResponse: Error creating temp file: (%d) %s", errno, strerror(errno));
+            BMYLogError(@"BMYRequest#connection:didReceiveResponse: Error creating temp file: (%d) %s", errno,
+                        strerror(errno));
         }
 
         fileHandle = [NSFileHandle fileHandleForWritingAtPath:tempFilename];
@@ -159,18 +157,22 @@ id<BMYNetworkRequestDelegate> bmyNetworkRequestDelegate = nil;
     if (resultFilename && [self statusCode] == HTTP_RESPONSE_SUC_CODE) {
         @try {
             [fileHandle writeData:data];
-        } @catch (NSException *e) {
+        }
+        @catch (NSException *e) {
             // In case we run out of disk space
             [urlConnection cancel];
             [fileHandle closeFile];
             [fileManager removeItemAtPath:tempFilename error:nil];
-            [self setError:[NSError errorWithDomain:BMYErrorDomain code:BMYErrorInsufficientDiskSpace userInfo:userInfo]];
+            [self setError:[NSError errorWithDomain:BMYErrorDomain
+                                               code:BMYErrorInsufficientDiskSpace
+                                           userInfo:userInfo]];
 
             SEL sel = failureSelector ? failureSelector : selector;
             [target performSelector:sel withObject:self];
             [bmyNetworkRequestDelegate networkRequestStopped];
             return;
-        } @finally {
+        }
+        @finally {
         }
     } else {
         if (resultData == nil) {
@@ -212,10 +214,11 @@ id<BMYNetworkRequestDelegate> bmyNetworkRequestDelegate = nil;
                 if ([resultJson isKindOfClass:[NSDictionary class]]) {
                     [errorUserInfo addEntriesFromDictionary:(NSDictionary *)resultJson];
                 }
-            } @catch (NSException *e) {
-                [errorUserInfo setObject:resultString
-                 forKey					:@"errorMessage"];
-            } @finally {
+            }
+            @catch (NSException *e) {
+                [errorUserInfo setObject:resultString forKey:@"errorMessage"];
+            }
+            @finally {
             }
         }
 
@@ -237,16 +240,12 @@ id<BMYNetworkRequestDelegate> bmyNetworkRequestDelegate = nil;
             // Everything is OK, move temp file over to desired file
             [fileManager removeItemAtPath:resultFilename error:nil];
 
-            BOOL success = [fileManager moveItemAtPath:tempFilename
-                                        toPath	:resultFilename
-                                        error	:&moveError];
+            BOOL success = [fileManager moveItemAtPath:tempFilename toPath:resultFilename error:&moveError];
 
             if (!success) {
                 BMYLogError(@"BMYRequest#connectionDidFinishLoading: error moving temp file to desire location: %@",
                             [moveError localizedDescription]);
-                [self setError:[NSError errorWithDomain:moveError.domain
-                                        code	:moveError.code
-                                        userInfo:self.userInfo]];
+                [self setError:[NSError errorWithDomain:moveError.domain code:moveError.code userInfo:self.userInfo]];
             }
         }
 
@@ -261,17 +260,14 @@ id<BMYNetworkRequestDelegate> bmyNetworkRequestDelegate = nil;
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)anError {
     [fileHandle closeFile];
-    [self setError:[NSError errorWithDomain:anError.domain
-                            code	:anError.code
-                            userInfo:self.userInfo]];
+    [self setError:[NSError errorWithDomain:anError.domain code:anError.code userInfo:self.userInfo]];
     bytesDownloaded = 0;
     downloadProgress = 0;
     uploadProgress = 0;
 
     if (tempFilename) {
         NSError *removeError;
-        BOOL success = [fileManager removeItemAtPath:tempFilename
-                                    error			:&removeError];
+        BOOL success = [fileManager removeItemAtPath:tempFilename error:&removeError];
 
         if (!success) {
             BMYLogError(@"BMYRequest#connection:didFailWithError: error removing temporary file: %@",
@@ -287,20 +283,19 @@ id<BMYNetworkRequestDelegate> bmyNetworkRequestDelegate = nil;
     [bmyNetworkRequestDelegate networkRequestStopped];
 }
 
-- (void)connection					:(NSURLConnection *)connection
-        didSendBodyData				:(NSInteger)bytesWritten
-        totalBytesWritten			:(NSInteger)totalBytesWritten
-        totalBytesExpectedToWrite	:(NSInteger)totalBytesExpectedToWrite {
+- (void)connection:(NSURLConnection *)connection
+                  didSendBodyData:(NSInteger)bytesWritten
+                totalBytesWritten:(NSInteger)totalBytesWritten
+        totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite {
     uploadProgress = (CGFloat)totalBytesWritten / (CGFloat)totalBytesExpectedToWrite;
 
     if (uploadProgressSelector) {
-        [target performSelector:uploadProgressSelector
-                withObject:self];
+        [target performSelector:uploadProgressSelector withObject:self];
     }
 }
 
-- (NSCachedURLResponse *)	connection			:(NSURLConnection *)connection
-                            willCacheResponse	:(NSCachedURLResponse *)cachedResponse {
+- (NSCachedURLResponse *)connection:(NSURLConnection *)connection
+                  willCacheResponse:(NSCachedURLResponse *)cachedResponse {
     return nil;
 }
 
@@ -331,8 +326,8 @@ id<BMYNetworkRequestDelegate> bmyNetworkRequestDelegate = nil;
 
     if (!([error.domain isEqual:BMYErrorDomain] && error.code == HTTP_CONTENT_NOT_MODIFIED_ERROR_CODE)) {
         // Log errors unless they're 304's
-        BMYLogError(@"BanmayunSDK: error making request to %@ - (%ld) %@",
-                    [[request URL] path], (long)error.code, errorStr);
+        BMYLogError(@"BanmayunSDK: error making request to %@ - (%ld) %@", [[request URL] path], (long)error.code,
+                    errorStr);
     }
 }
 
@@ -341,7 +336,8 @@ id<BMYNetworkRequestDelegate> bmyNetworkRequestDelegate = nil;
 // Performs SSL certificate pinning
 //
 
-- (void)connection:(NSURLConnection *)connection willSendRequestForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
+- (void)connection:(NSURLConnection *)connection
+        willSendRequestForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
     NSString *host = [[challenge protectionSpace] host];
 
     // Check the authentication method for connection: only SSL/TLS is allowed
@@ -354,9 +350,8 @@ id<BMYNetworkRequestDelegate> bmyNetworkRequestDelegate = nil;
 
         if (trustResult == kSecTrustResultUnspecified) {
             // Certificate validation succeeded. Continue the connection
-            [challenge.sender
-             useCredential:[NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]
-                           forAuthenticationChallenge:challenge];
+            [challenge.sender useCredential:[NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]
+                    forAuthenticationChallenge:challenge];
         } else {
             // Certificate validation failed. Terminate the connection
             BMYLogError(@"BanmayunSDK: SSL Error. Cannot validate a certificate for the host: %@", host);

@@ -7,7 +7,7 @@
 - (BOOL)appendDictionary:(NSDictionary *)fragment into:(NSMutableString *)json;
 - (BOOL)appendString:(NSString *)fragment into:(NSMutableString *)json;
 
-- (NSString *)  indent;
+- (NSString *)indent;
 
 @end
 
@@ -58,7 +58,7 @@ static NSMutableCharacterSet *kEscapeChars;
 }
 
 - (NSString *)indent {
-    return [@"\n" stringByPaddingToLength : 1 + 2 * depth withString : @" " startingAtIndex : 0];
+    return [@"\n" stringByPaddingToLength:1 + 2 * depth withString:@" " startingAtIndex:0];
 }
 
 - (BOOL)appendValue:(id)fragment into:(NSMutableString *)json {
@@ -76,7 +76,7 @@ static NSMutableCharacterSet *kEscapeChars;
         }
     } else if ([fragment isKindOfClass:[NSNumber class]]) {
         if ('c' == *[fragment objCType]) {
-            [json appendString:[fragment boolValue] ? @"true":@"false"];
+            [json appendString:[fragment boolValue] ? @"true" : @"false"];
         } else {
             [json appendString:[fragment stringValue]];
         }
@@ -85,7 +85,9 @@ static NSMutableCharacterSet *kEscapeChars;
     } else if ([fragment respondsToSelector:@selector(proxyForJson)]) {
         [self appendValue:[fragment proxyForJson] into:json];
     } else {
-        [self addErrorWithCode:EUNSUPPORTED description:[NSString stringWithFormat:@"Json serialisation not supported for %@", [fragment class]]];
+        [self addErrorWithCode:EUNSUPPORTED
+                     description:[NSString stringWithFormat:@"Json serialisation not supported for %@",
+                                                            [fragment class]]];
         return NO;
     }
 
@@ -167,7 +169,8 @@ static NSMutableCharacterSet *kEscapeChars;
         [json appendString:colon];
 
         if (![self appendValue:[fragment objectForKey:value] into:json]) {
-            [self addErrorWithCode:EUNSUPPORTED description:[NSString stringWithFormat:@"Unsupported value for key %@ in object", value]];
+            [self addErrorWithCode:EUNSUPPORTED
+                         description:[NSString stringWithFormat:@"Unsupported value for key %@ in object", value]];
             return NO;
         }
     }
@@ -196,19 +199,33 @@ static NSMutableCharacterSet *kEscapeChars;
         for (NSUInteger i = 0; i < length; i++) {
             unichar uc = [fragment characterAtIndex:i];
             switch (uc) {
-                case '"' : [json appendString:@"\\\""];       break;
+                case '"':
+                    [json appendString:@"\\\""];
+                    break;
 
-                case '\\':[json appendString:@"\\\\"];       break;
+                case '\\':
+                    [json appendString:@"\\\\"];
+                    break;
 
-                case '\t':[json appendString:@"\\t"];        break;
+                case '\t':
+                    [json appendString:@"\\t"];
+                    break;
 
-                case '\n':[json appendString:@"\\n"];        break;
+                case '\n':
+                    [json appendString:@"\\n"];
+                    break;
 
-                case '\r':[json appendString:@"\\r"];        break;
+                case '\r':
+                    [json appendString:@"\\r"];
+                    break;
 
-                case '\b':[json appendString:@"\\b"];        break;
+                case '\b':
+                    [json appendString:@"\\b"];
+                    break;
 
-                case '\f':[json appendString:@"\\f"];        break;
+                case '\f':
+                    [json appendString:@"\\f"];
+                    break;
 
                 default:
 

@@ -17,10 +17,7 @@
             [part2 rangeOfCharacterFromSet:invalidCharacters].location == NSNotFound &&
             [part3 rangeOfCharacterFromSet:invalidCharacters].location == NSNotFound &&
             [part4 rangeOfCharacterFromSet:invalidCharacters].location == NSNotFound) {
-            if ([part1 intValue] < 255 &&
-                [part2 intValue] < 255 &&
-                [part3 intValue] < 255 &&
-                [part4 intValue] < 255) {
+            if ([part1 intValue] < 255 && [part2 intValue] < 255 && [part3 intValue] < 255 && [part4 intValue] < 255) {
                 isIPAddress = YES;
             }
         }
@@ -30,13 +27,14 @@
 }
 
 - (NSString *)stringByAddingURIPercentEscapesUsingEncoding:(NSStringEncoding)inEncoding {
-    NSString *escapedString = (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (CFStringRef)self, NULL, (CFStringRef)@":/?=,!$&'()*+;[]@#", CFStringConvertNSStringEncodingToEncoding(inEncoding)));
+    NSString *escapedString = (NSString *)CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(
+            kCFAllocatorDefault, (CFStringRef)self, NULL, (CFStringRef) @":/?=,!$&'()*+;[]@#",
+            CFStringConvertNSStringEncodingToEncoding(inEncoding)));
 
     return escapedString;
 }
 
 @end
-
 
 @implementation NSURL (BMYURLEscapingAdditions)
 

@@ -57,7 +57,8 @@
             [parameterScanner scanUpToString:@"&" intoString:&value];
             [parameterScanner scanString:@"&" intoString:NULL];
 
-            [foundParameters setObject:[value stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] forKey:name];
+            [foundParameters setObject:[value stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+                                forKey:name];
         }
     }
 
@@ -115,11 +116,13 @@
 @synthesize name = _name;
 @synthesize value = _value;
 
-
 #pragma mark -
 
 - (NSString *)URLEncodedParameterString {
-    return [NSString stringWithFormat:@"%@=%@", [self.name stringByAddingURIPercentEscapesUsingEncoding:NSUTF8StringEncoding], self.value ? [self.value stringByAddingURIPercentEscapesUsingEncoding:NSUTF8StringEncoding]:@""];
+    return [NSString
+            stringWithFormat:@"%@=%@", [self.name stringByAddingURIPercentEscapesUsingEncoding:NSUTF8StringEncoding],
+                             self.value ? [self.value stringByAddingURIPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+                                        : @""];
 }
 
 #pragma mark -
@@ -135,7 +138,8 @@
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<%@: %p %@>", NSStringFromClass([self class]), self, [self URLEncodedParameterString]];
+    return [NSString
+            stringWithFormat:@"<%@: %p %@>", NSStringFromClass([self class]), self, [self URLEncodedParameterString]];
 }
 
 @end

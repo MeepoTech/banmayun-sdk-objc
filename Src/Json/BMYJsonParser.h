@@ -19,7 +19,6 @@
 
 @end
 
-
 /**
    @brief The Json parser class.
 
@@ -41,8 +40,8 @@
    as we can thus avoid any loss of precision. (Json allows ridiculously large numbers.)
 
  */
-@interface BMYJsonParser : BMYJsonBase <BMYJsonParser> {
-    @private
+@interface BMYJsonParser : BMYJsonBase<BMYJsonParser> {
+   @private
     const char *c;
 }
 

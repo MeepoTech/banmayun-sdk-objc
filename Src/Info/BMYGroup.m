@@ -24,7 +24,6 @@
 @synthesize relation;
 @synthesize root;
 
-
 - (id)initWithDictionary:(NSDictionary *)dict {
     if (self = [super init]) {
         groupId = [dict objectForKey:@"id"];

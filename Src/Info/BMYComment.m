@@ -4,14 +4,12 @@
 
 @implementation BMYComment
 
-
 @synthesize commentId;
 @synthesize root_id;
 @synthesize meta_id;
 @synthesize contents;
 @synthesize created_at;
 @synthesize created_by;
-
 
 - (id)initWithDictionary:(NSDictionary *)dict {
     if (self = [super init]) {

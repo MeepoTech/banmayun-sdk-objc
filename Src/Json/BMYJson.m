@@ -22,7 +22,6 @@
 
 #pragma mark Writer
 
-
 - (NSString *)stringWithObject:(id)obj {
     NSString *repr = [jsonWriter stringWithObject:obj];
 
@@ -72,9 +71,7 @@
    @deprecated Given we bill ourselves as a "strict" Json library, this method should be removed.
  */
 - (NSString *)stringWithFragment:(id)value error:(NSError **)error {
-    return [self stringWithObject:value
-            allowScalar :YES
-            error		:error];
+    return [self stringWithObject:value allowScalar:YES error:error];
 }
 
 /**
@@ -85,9 +82,7 @@
    @param error used to return an error by reference (pass NULL if this is not desired)
  */
 - (NSString *)stringWithObject:(id)value error:(NSError **)error {
-    return [self stringWithObject:value
-            allowScalar :NO
-            error		:error];
+    return [self stringWithObject:value allowScalar:NO error:error];
 }
 
 #pragma mark Parsing
@@ -142,9 +137,7 @@
    @deprecated Given we bill ourselves as a "strict" Json library, this method should be removed.
  */
 - (id)fragmentWithString:(NSString *)repr error:(NSError **)error {
-    return [self objectWithString:repr
-            allowScalar :YES
-            error		:error];
+    return [self objectWithString:repr allowScalar:YES error:error];
 }
 
 /**
@@ -155,9 +148,7 @@
    @param error used to return an error by reference (pass NULL if this is not desired)
  */
 - (id)objectWithString:(NSString *)repr error:(NSError **)error {
-    return [self objectWithString:repr
-            allowScalar :NO
-            error		:error];
+    return [self objectWithString:repr allowScalar:NO error:error];
 }
 
 #pragma mark Properties - parsing

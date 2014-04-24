@@ -25,7 +25,7 @@ enum {
 @interface BMYJsonBase : NSObject {
     NSMutableArray *errorTrace;
 
-    @protected
+   @protected
     NSUInteger depth, maxDepth;
 }
 
@@ -45,7 +45,7 @@ enum {
    You need to check the return value of the call you're making to figure out
    if the call actually failed, before you know call this method.
  */
-@property (copy, readonly) NSArray *errorTrace;
+@property(copy, readonly) NSArray *errorTrace;
 
 /// @internal for use in subclasses to add errors to the stack trace
 - (void)addErrorWithCode:(NSUInteger)code description:(NSString *)str;

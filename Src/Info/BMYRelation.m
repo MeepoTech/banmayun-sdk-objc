@@ -10,7 +10,6 @@
 @synthesize remarks;
 @synthesize created_at;
 
-
 - (id)initWithDictionary:(NSDictionary *)dict {
     if (self = [super init]) {
         if ([dict objectForKey:@"role"]) {

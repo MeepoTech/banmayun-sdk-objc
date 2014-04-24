@@ -21,7 +21,6 @@
 @synthesize relation;
 @synthesize root;
 
-
 - (id)initWithDictionary:(NSDictionary *)dict {
     if (self = [super init]) {
         userId = [dict objectForKey:@"id"];

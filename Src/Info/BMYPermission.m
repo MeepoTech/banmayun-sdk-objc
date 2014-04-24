@@ -11,7 +11,6 @@
 @synthesize writable_to_others;
 @synthesize deletable_to_others;
 
-
 - (id)initWithDictionary:(NSDictionary *)dict {
     if (self = [super init]) {
         insertable_to_owner = [[dict objectForKey:@"insertable_to_owner"] boolValue];

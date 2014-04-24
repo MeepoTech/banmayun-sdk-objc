@@ -12,7 +12,6 @@
 @synthesize modified_by;
 @synthesize client_modified_at;
 
-
 - (id)initWithDictionary:(NSDictionary *)dict {
     if (self = [super init]) {
         version = [[dict objectForKey:@"version"] longValue];

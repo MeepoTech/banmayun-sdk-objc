@@ -12,7 +12,6 @@
 @synthesize created_at;
 @synthesize is_current;
 
-
 - (id)initWithDictionary:(NSDictionary *)dict {
     if (self = [super init]) {
         userId = [dict objectForKey:@"userid"];

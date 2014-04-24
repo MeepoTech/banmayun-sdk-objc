@@ -7,7 +7,6 @@
  */
 @interface NSString (NSString_BMYJson)
 
-
 /**
    @brief Returns the object represented in the receiver, or nil on error.
 
