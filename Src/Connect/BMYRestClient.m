@@ -28,29 +28,6 @@ NSString *kBMYBanmayunAPIVersion = @"1";
 
 NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
 
-#define BANMAYUN_ACCESS_TOKEN_KEY @"token"
-#define BANMAYUN_USER_ID_KEY @"user_id"
-#define BANMAYUN_GROUP_ID_KEY @"group_id"
-#define BANMAYUN_LINK_ID_KEY @"link_id"
-#define BANMAYUN_ROOT_ID_KEY @"root_id"
-#define BANMAYUN_SHARE_ID_KEY @"share_id"
-#define BANMAYUN_COMMENT_ID_KEY @"comment_id"
-#define BANMAYUN_TRASH_ID_KEY @"trash_id"
-#define BANMAYUN_FILE_PATH_KEY @"path"
-#define BANMAYUN_LIST_OFFSET_KEY @"offset"
-#define BANMAYUN_FILE_OFFSET_KEY @"offset"
-#define BANMAYUN_FILE_LOADSIZE_KEY @"bytes"
-#define BANMAYUN_IMAGE_FORMAT_KEY @"format"
-#define BANMAYUN_IMAGE_SIZE_KEY @"size"
-#define BANMAYUN_FILE_META_ID_KEY @"meta_id"
-#define BANMAYUN_FILE_UPLOAD_OVERWRITE_KEY @"overwrite"
-#define BANMAYUN_FILE_CHUNKUPLOAD_OFFSET_KEY @"offset"
-#define BANMAYUN_FILE_CHUNKUPLOAD_UPLOADID_KEY @"upload_id"
-#define BANMAYUN_FILE_MODIFIED_AT_MILLIS @"modified_at_millis"
-
-#define BANMAYUN_FILE_DESTINATION_PATH_KEY @"destinationPath"
-#define BANMAYUN_FILE_UPLOAD_SOURCE_PATH_KEY @"sourcePath"
-
 @interface BMYRestClient ()
 
 // This method escape all URI eacape characters except /
@@ -88,7 +65,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
 }
 
 - (NSString *)accessToken {
-    NSString *token = [[NSUserDefaults standardUserDefaults] objectForKey:@"accessToken"];
+    NSString *token = [[NSUserDefaults standardUserDefaults] objectForKey:@"token"];
 
     if (!token) {
         return @"";
@@ -99,7 +76,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
 
 // Method just for creating user so as to help indentify admin and user
 - (NSString *)accessTokenForCreateUser {
-    NSString *token = [[NSUserDefaults standardUserDefaults] objectForKey:@"accessToken"];
+    NSString *token = [[NSUserDefaults standardUserDefaults] objectForKey:@"token"];
     return token;
 }
 
@@ -138,7 +115,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
 #pragma mark -
 #pragma mark - Sign In
 
-- (void)signInWithParams:(NSDictionary *)params {
+- (void)signInWithParams:(NSDictionary *)params userInfo:(NSDictionary *)userInfo {
     NSString *fullPath = [NSString stringWithFormat:@"/auth/sign_in"];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
 
@@ -147,12 +124,6 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidSignIn:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-
-    if (params) {
-        [userInfo addEntriesFromDictionary:params];
-    }
-
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -167,28 +138,34 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     }
 
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
 
     if (username) {
         [params setObject:username forKey:@"username"];
+        [userInfo setObject:username forKey:@"username"];
     }
 
     if (password) {
         [params setObject:password forKey:@"password"];
+        [userInfo setObject:password forKey:@"password"];
     }
 
     if (linkname) {
         [params setObject:linkname forKey:@"link_name"];
+        [userInfo setObject:linkname forKey:@"linkname"];
     }
 
     if (linkDevice) {
         [params setObject:linkDevice forKey:@"link_device"];
+        [userInfo setObject:linkDevice forKey:@"linkDevice"];
     }
 
     if (ldapname) {
         [params setObject:ldapname forKey:@"ldap_name"];
+        [userInfo setObject:ldapname forKey:@"ldapName"];
     }
 
-    [self signInWithParams:params];
+    [self signInWithParams:params userInfo:userInfo];
 }
 
 - (void)requestDidSignIn:(BMYRequest *)request {
@@ -246,7 +223,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
 #pragma mark - Sign Out
 
 - (void)signOut {
-    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/auth/sign_out"];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:dict];
 
@@ -256,7 +233,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidSignOut:)];
     NSMutableDictionary *userInfo =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -315,7 +292,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
 #pragma mark -
 #pragma mark - Change Password
 
-- (void)changePasswordWithParams:(NSDictionary *)params {
+- (void)changePasswordWithParams:(NSDictionary *)params userInfo:(NSDictionary *)userInfo {
     NSString *fullPath = [NSString stringWithFormat:@"/auth/change_password"];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
 
@@ -323,12 +300,6 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidChangePassword:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-
-    if (params) {
-        [userInfo addEntriesFromDictionary:params];
-    }
-
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -340,7 +311,9 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
 
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:username, @"username", oldpasswd, @"password",
                                                                       newpasswd, @"new_password", nil];
-    [self changePasswordWithParams:params];
+    NSDictionary *userInfo = [NSDictionary
+            dictionaryWithObjectsAndKeys:username, @"username", oldpasswd, @"password", newpasswd, @"newPassword", nil];
+    [self changePasswordWithParams:params userInfo:userInfo];
 }
 
 - (void)requestDidChangePassword:(BMYRequest *)request {
@@ -413,7 +386,8 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidForgotPassword:)];
-    request.userInfo = params;
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:email, @"email", nil];
+    request.userInfo = userInfo;
     [requests addObject:request];
 }
 
@@ -471,7 +445,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
 #pragma mark -
 #pragma mark - Reset User Password
 
-- (void)resetPasswordWithParams:(NSDictionary *)params {
+- (void)resetPasswordWithParams:(NSDictionary *)params userInfo:(NSDictionary *)userInfo {
     NSString *fullPath = [NSString stringWithFormat:@"/auth/reset_password"];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
 
@@ -479,12 +453,6 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidResetPassword:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-
-    if (params) {
-        [userInfo addEntriesFromDictionary:params];
-    }
-
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -494,9 +462,11 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:newPassword, @"new_password", [self accessToken],
-                                                                    BANMAYUN_ACCESS_TOKEN_KEY, nil];
-    [self resetPasswordWithParams:dict];
+    NSDictionary *dict =
+            [NSDictionary dictionaryWithObjectsAndKeys:newPassword, @"new_password", [self accessToken], @"token", nil];
+    NSDictionary *userInfo =
+            [NSDictionary dictionaryWithObjectsAndKeys:newPassword, @"newPassword", [self accessToken], @"token", nil];
+    [self resetPasswordWithParams:dict userInfo:userInfo];
 }
 
 - (void)requestDidResetPassword:(BMYRequest *)request {
@@ -562,7 +532,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     }
 
     NSMutableDictionary *params =
-            [[NSMutableDictionary alloc] initWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+            [[NSMutableDictionary alloc] initWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/users/%@/links/%@", aUserId, linkId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"GET";
@@ -571,8 +541,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidGetUserLink:)];
     NSMutableDictionary *userInfo = [[NSMutableDictionary alloc]
-            initWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, aUserId, BANMAYUN_USER_ID_KEY, linkId,
-                                   BANMAYUN_LINK_ID_KEY, nil];
+            initWithObjectsAndKeys:[self accessToken], @"token", aUserId, @"userId", linkId, @"linkId", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -633,49 +602,45 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
 #pragma mark -
 #pragma mark - List User Links
 
-- (void)listUserLinks:(NSString *)aUserId withParams:(NSDictionary *)params {
-    if (!aUserId) {
-        return;
-    }
-
+- (void)listUserLinks:(NSString *)aUserId withParams:(NSDictionary *)params userInfo:(NSDictionary *)aUserInfoDict {
     NSString *fullPath = [NSString stringWithFormat:@"/users/%@/links", aUserId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"GET";
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidListUserLinks:)];
-    NSMutableDictionary *userInfo =
-            [[NSMutableDictionary alloc] initWithObjectsAndKeys:aUserId, BANMAYUN_USER_ID_KEY, nil];
-
-    if (params) {
-        [userInfo addEntriesFromDictionary:params];
-    }
-
-    request.userInfo = userInfo;
+    request.userInfo = aUserInfoDict;
     [requests addObject:request];
 }
 
 - (void)listUserLinks:(NSString *)aUserId offset:(NSNumber *)offset limit:(NSNumber *)limit {
+    if (!aUserId) {
+        return;
+    }
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-
-    [params setObject:[self accessToken] forKey:BANMAYUN_ACCESS_TOKEN_KEY];
+    NSMutableDictionary *aUserInfoDict =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", aUserId, @"userId", nil];
+    [params setObject:[self accessToken] forKey:@"token"];
 
     if (offset) {
-        [params setObject:offset forKey:BANMAYUN_LIST_OFFSET_KEY];
+        [params setObject:offset forKey:@"offset"];
+        [aUserInfoDict setObject:offset forKey:@"offset"];
     }
 
     if (limit) {
         [params setObject:limit forKey:@"limit"];
+        [aUserInfoDict setObject:limit forKey:@"limit"];
     }
 
-    [self listUserLinks:aUserId withParams:params];
+    [self listUserLinks:aUserId withParams:params userInfo:aUserInfoDict];
 }
 
 - (void)listUserLinks:(NSString *)aUserId {
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
 
-    [self listUserLinks:aUserId withParams:params];
+    [self listUserLinks:aUserId
+               withParams:params
+                 userInfo:[NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil]];
 }
 
 - (void)requestDidListUserLinks:(BMYRequest *)request {
@@ -739,8 +704,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/users/%@/links/%@", aUserId, aLinkId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"DELETE";
@@ -749,8 +713,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidDeleteUserLink:)];
     NSMutableDictionary *userInfo = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:aUserId, BANMAYUN_USER_ID_KEY, aLinkId, BANMAYUN_LINK_ID_KEY,
-                                         [self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+            dictionaryWithObjectsAndKeys:aUserId, @"userId", aLinkId, @"linkId", [self accessToken], @"token", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -819,8 +782,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *dict =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/users/%@/links", aUserId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:dict];
     urlRequest.HTTPMethod = @"DELETE";
@@ -829,12 +791,8 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidDeleteAllUserLinks:)];
     NSMutableDictionary *userInfo =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:aUserId, BANMAYUN_USER_ID_KEY, nil];
-
-    if (dict) {
-        [userInfo addEntriesFromDictionary:dict];
-    }
-
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:aUserId, @"userId", [self accessToken], @"token", nil];
+    request.userInfo = userInfo;
     [requests addObject:request];
 }
 
@@ -968,7 +926,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
 
     NSString *tokenStr = [self accessTokenForCreateUser];
     if (tokenStr) {
-        [params setObject:tokenStr forKey:BANMAYUN_ACCESS_TOKEN_KEY];
+        [params setObject:tokenStr forKey:@"token"];
     }
 
     NSMutableDictionary *bodyDict = [NSMutableDictionary dictionary];
@@ -1012,7 +970,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     }
 
     if (displayName) {
-        [userInfo setObject:displayName forKey:@"display_name"];
+        [userInfo setObject:displayName forKey:@"displayName"];
     }
 
     if (source) {
@@ -1020,7 +978,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     }
 
     if (groupsCanOwn) {
-        [userInfo setObject:groupsCanOwn forKey:@"groups_can_own"];
+        [userInfo setObject:groupsCanOwn forKey:@"groupsCanOwn"];
     }
 
     if (role) {
@@ -1092,8 +1050,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/users/%@", aUserId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"GET";
@@ -1102,8 +1059,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidGetUser:)];
     NSMutableDictionary *userInfo =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:aUserId, BANMAYUN_USER_ID_KEY, [self accessToken],
-                                                              BANMAYUN_ACCESS_TOKEN_KEY, nil];
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:aUserId, @"userId", [self accessToken], @"token", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -1164,10 +1120,9 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
 #pragma mark -
 #pragma mark - List Users
 
-- (void)listUsersWithParams:(NSDictionary *)params {
+- (void)listUsersWithParams:(NSDictionary *)params userInfo:(NSDictionary *)aUserInfo {
     NSString *fullPath = [NSString stringWithFormat:@"/users"];
-    NSMutableDictionary *dict =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
 
     if (params) {
         [dict addEntriesFromDictionary:params];
@@ -1180,10 +1135,10 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidListUsers:)];
     NSMutableDictionary *userInfo =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
 
     if (params) {
-        [userInfo addEntriesFromDictionary:params];
+        [userInfo addEntriesFromDictionary:aUserInfo];
     }
 
     request.userInfo = userInfo;
@@ -1196,9 +1151,11 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
              offset:(NSNumber *)offset
               limit:(NSNumber *)limit {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
 
     if (role) {
         [dict setObject:role forKey:@"role"];
+        [userInfo setObject:role forKey:@"role"];
     }
 
     if (isActivated) {
@@ -1207,6 +1164,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         } else {
             [dict setObject:@"false" forKey:@"is_activated"];
         }
+        [userInfo setObject:isActivated forKey:@"isActivated"];
     }
 
     if (isBlocked) {
@@ -1215,21 +1173,24 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         } else {
             [dict setObject:@"false" forKey:@"is_blocked"];
         }
+        [userInfo setObject:isBlocked forKey:@"isBlocked"];
     }
 
     if (offset) {
-        [dict setObject:offset forKey:BANMAYUN_LIST_OFFSET_KEY];
+        [dict setObject:offset forKey:@"offset"];
+        [userInfo setObject:offset forKey:@"offset"];
     }
 
     if (limit) {
         [dict setObject:limit forKey:@"limit"];
+        [userInfo setObject:limit forKey:@"limit"];
     }
 
-    [self listUsersWithParams:dict];
+    [self listUsersWithParams:dict userInfo:userInfo];
 }
 
 - (void)listUsers {
-    [self listUsersWithParams:nil];
+    [self listUsersWithParams:nil userInfo:nil];
 }
 
 - (void)requestDidListUsers:(BMYRequest *)request {
@@ -1298,8 +1259,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/users/%@/update", aUserId];
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     NSMutableDictionary *bodyDict = [NSMutableDictionary dictionary];
 
@@ -1332,19 +1292,18 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidUpdateUser:)];
     NSMutableDictionary *userInfo =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, aUserId,
-                                                              BANMAYUN_USER_ID_KEY, nil];
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", aUserId, @"userId", nil];
 
     if (displayName) {
-        [userInfo setObject:displayName forKey:@"display_name"];
+        [userInfo setObject:displayName forKey:@"displayName"];
     }
 
     if (groupsCanOwn) {
-        [userInfo setObject:groupsCanOwn forKey:@"groups_can_own"];
+        [userInfo setObject:groupsCanOwn forKey:@"groupsCanOwn"];
     }
 
     if (isBlocked) {
-        [userInfo setObject:isBlocked forKey:@"is_blocked"];
+        [userInfo setObject:isBlocked forKey:@"isBlocked"];
     }
 
     if (role) {
@@ -1416,8 +1375,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/users/%@/verify_email", aUserId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"POST";
@@ -1426,8 +1384,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidVerifyUserEmail:)];
     NSMutableDictionary *userInfo =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:aUserId, BANMAYUN_USER_ID_KEY, [self accessToken],
-                                                              BANMAYUN_ACCESS_TOKEN_KEY, nil];
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:aUserId, @"userId", [self accessToken], @"token", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -1489,8 +1446,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
 #pragma mark - Set User Password
 
 - (void)setUserPassword:(NSString *)aUserId withParams:(NSDictionary *)params {
-    NSMutableDictionary *dict =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
 
     if (params) {
         [dict addEntriesFromDictionary:params];
@@ -1504,8 +1460,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidSetUserPassword:)];
     NSMutableDictionary *userInfo =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:aUserId, BANMAYUN_USER_ID_KEY, [self accessToken],
-                                                              BANMAYUN_ACCESS_TOKEN_KEY, nil];
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:aUserId, @"userId", [self accessToken], @"token", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -1580,8 +1535,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *dict =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/users/%@/avatar", aUserId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:dict];
     urlRequest.HTTPMethod = @"POST";
@@ -1601,8 +1555,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidSetUserAvatar:)];
     NSMutableDictionary *userInfo =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:aUserId, BANMAYUN_USER_ID_KEY, [self accessToken],
-                                                              BANMAYUN_ACCESS_TOKEN_KEY, nil];
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:aUserId, @"userId", [self accessToken], @"token", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -1632,14 +1585,13 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     return [NSString stringWithFormat:@"%@", aUserId];
 }
 
-- (void)getUserAvatar:(NSString *)aUserId params:(NSDictionary *)params {
+- (void)getUserAvatar:(NSString *)aUserId params:(NSDictionary *)params userInfo:(NSDictionary *)aUserInfoDict {
     if (!aUserId) {
         return;
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/users/%@/avatar", aUserId];
-    NSMutableDictionary *dict =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
 
     if (params) {
         [dict addEntriesFromDictionary:params];
@@ -1651,11 +1603,10 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidGetUserAvatar:)];
     NSMutableDictionary *userInfo =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, aUserId,
-                                                              BANMAYUN_USER_ID_KEY, nil];
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", aUserId, @"userId", nil];
 
-    if (params) {
-        [userInfo addEntriesFromDictionary:params];
+    if (aUserInfoDict) {
+        [userInfo addEntriesFromDictionary:aUserInfoDict];
     }
 
     request.userInfo = userInfo;
@@ -1664,16 +1615,18 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
 
 - (void)getUserAvatar:(NSString *)aUserId format:(NSString *)format size:(NSString *)size {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-
+    NSMutableDictionary *aUserInfoDict = [NSMutableDictionary dictionary];
     if (format) {
-        [params setObject:format forKey:BANMAYUN_IMAGE_FORMAT_KEY];
+        [params setObject:format forKey:@"format"];
+        [aUserInfoDict setObject:format forKey:@"format"];
     }
 
     if (size) {
-        [params setObject:size forKey:BANMAYUN_IMAGE_SIZE_KEY];
+        [params setObject:size forKey:@"size"];
+        [aUserInfoDict setObject:size forKey:@"size"];
     }
 
-    [self getUserAvatar:aUserId params:params];
+    [self getUserAvatar:aUserId params:params userInfo:aUserInfoDict];
 }
 
 - (void)requestDidGetUserAvatar:(BMYRequest *)request {
@@ -1691,24 +1644,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         }
     }
 
-    [imageLoadRequests
-            removeObjectForKey:[self userAvatarKeyForUserId:[request.userInfo objectForKey:BANMAYUN_USER_ID_KEY]]];
-}
-
-/*
-   User Group Common Usage Method
- */
-- (void)parseUserGroupObject:(BMYRequest *)request
-                resultThread:(NSThread *)thread
-                succSelector:(SEL)aSeccSelector
-                failSelector:(SEL)aFailSelector {
-    NSDictionary *resultDic = (NSDictionary *)[request resultJson];
-
-    if (resultDic) {
-        [self performSelector:aSeccSelector onThread:thread withObject:resultDic waitUntilDone:NO];
-    } else {
-        [self performSelector:aFailSelector onThread:thread withObject:request waitUntilDone:NO];
-    }
+    [imageLoadRequests removeObjectForKey:[self userAvatarKeyForUserId:[request.userInfo objectForKey:@"userId"]]];
 }
 
 #pragma mark -
@@ -1724,8 +1660,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
 
     NSString *fullPath = [NSString stringWithFormat:@"/users/%@/groups", aUserId];
     NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, groupId,
-                                                              BANMAYUN_GROUP_ID_KEY, nil];
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", groupId, @"group_id", nil];
     NSMutableDictionary *bodyDict = [NSMutableDictionary dictionary];
 
     if (remarks) {
@@ -1745,8 +1680,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidAddUserGroup:)];
     NSMutableDictionary *userInfo = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:aUserId, BANMAYUN_USER_ID_KEY, groupId, BANMAYUN_GROUP_ID_KEY,
-                                         [self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+            dictionaryWithObjectsAndKeys:aUserId, @"userId", groupId, @"groupId", [self accessToken], @"token", nil];
 
     if (remarks) {
         [userInfo setObject:remarks forKey:@"remarks"];
@@ -1815,16 +1749,14 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/users/%@/groups/%@", aUserId, groupId];
-    NSDictionary *params =
-            [NSDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"GET";
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidGetUserGroup:)];
     NSMutableDictionary *userInfo = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:aUserId, BANMAYUN_USER_ID_KEY, groupId, BANMAYUN_GROUP_ID_KEY,
-                                         [self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+            dictionaryWithObjectsAndKeys:aUserId, @"userId", groupId, @"groupId", [self accessToken], @"token", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -1888,11 +1820,13 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
+    NSMutableDictionary *userInfo =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", aUserId, @"userId", nil];
 
     if (role) {
         [params setObject:role forKey:@"role"];
+        [userInfo setObject:role forKey:@"role"];
     }
 
     if (isActivated) {
@@ -1901,6 +1835,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         } else {
             [params setObject:@"false" forKey:@"is_activated"];
         }
+        [userInfo setObject:isActivated forKey:@"isActivated"];
     }
 
     if (isBlocked) {
@@ -1909,14 +1844,17 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         } else {
             [params setObject:@"false" forKey:@"is_blocked"];
         }
+        [userInfo setObject:isBlocked forKey:@"isBlocked"];
     }
 
     if (offset) {
-        [params setObject:offset forKey:BANMAYUN_LIST_OFFSET_KEY];
+        [params setObject:offset forKey:@"offset"];
+        [userInfo setObject:offset forKey:@"offset"];
     }
 
     if (limit) {
         [params setObject:limit forKey:@"limit"];
+        [userInfo setObject:limit forKey:@"limit"];
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/users/%@/groups", aUserId];
@@ -1925,24 +1863,12 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidListUserGroups:)];
-    NSMutableDictionary *userInfo =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:aUserId, BANMAYUN_USER_ID_KEY, nil];
-
-    if (params) {
-        [userInfo addEntriesFromDictionary:params];
-    }
-
     request.userInfo = userInfo;
     [requests addObject:request];
 }
 
 - (void)listUserGroups:(NSString *)aUserId role:(NSString *)role {
-    [self listUserGroups:aUserId
-                      role:role
-               isActivated:[NSNumber numberWithBool:YES]
-                 isBlocked:[NSNumber numberWithBool:NO]
-                    offset:[NSNumber numberWithInteger:0]
-                     limit:nil];
+    [self listUserGroups:aUserId role:role isActivated:nil isBlocked:nil offset:nil limit:nil];
 }
 
 - (void)listUserGroups:(NSString *)aUserId {
@@ -2014,8 +1940,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSDictionary *params =
-            [NSDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/users/%@/groups/%@/update", aUserId, groupId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"POST";
@@ -2048,19 +1973,18 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidUpdateUserGroup:)];
     NSMutableDictionary *userInfo = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, aUserId, BANMAYUN_USER_ID_KEY,
-                                         groupId, BANMAYUN_GROUP_ID_KEY, nil];
+            dictionaryWithObjectsAndKeys:[self accessToken], @"token", aUserId, @"userId", groupId, @"groupId", nil];
 
     if (role) {
         [userInfo setObject:role forKey:@"role"];
     }
 
     if (isActivated) {
-        [userInfo setObject:isActivated forKey:@"is_activated"];
+        [userInfo setObject:isActivated forKey:@"isActivated"];
     }
 
     if (isBlocked) {
-        [userInfo setObject:isBlocked forKey:@"is_blocked"];
+        [userInfo setObject:isBlocked forKey:@"isBlocked"];
     }
 
     request.userInfo = userInfo;
@@ -2129,8 +2053,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSDictionary *params =
-            [NSDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/users/%@/groups/%@", aUserId, groupId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"DELETE";
@@ -2138,9 +2061,8 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidRemoveUserGroup:)];
-    NSDictionary *userInfo =
-            [NSDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, aUserId,
-                                                       BANMAYUN_USER_ID_KEY, groupId, BANMAYUN_GROUP_ID_KEY, nil];
+    NSDictionary *userInfo = [NSDictionary
+            dictionaryWithObjectsAndKeys:[self accessToken], @"token", aUserId, @"userId", groupId, @"groupId", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -2200,8 +2122,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/groups/exists"];
-    NSDictionary *params =
-            [NSDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     NSMutableDictionary *bodyDict = [NSMutableDictionary dictionary];
 
@@ -2216,7 +2137,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidExistGroup:)];
     NSMutableDictionary *userInfo =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
 
     if (name) {
         [userInfo setObject:name forKey:@"name"];
@@ -2287,8 +2208,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
 
     if (ownerId) {
         [params setObject:ownerId forKey:@"owner_id"];
@@ -2332,7 +2252,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidCreateGroup:)];
     NSMutableDictionary *userInfo =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
 
     if (name) {
         [userInfo setObject:name forKey:@"name"];
@@ -2343,7 +2263,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     }
 
     if (isVisible) {
-        [userInfo setObject:isVisible forKey:@"is_visible"];
+        [userInfo setObject:isVisible forKey:@"isVisible"];
     }
 
     if (introduction) {
@@ -2359,7 +2279,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     }
 
     if (ownerId) {
-        [userInfo setObject:ownerId forKey:@"owner_id"];
+        [userInfo setObject:ownerId forKey:@"ownerId"];
     }
 
     if (source) {
@@ -2428,8 +2348,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/groups/%@", groupId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"GET";
@@ -2438,8 +2357,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidGetGroup:)];
     NSMutableDictionary *userInfo =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, groupId,
-                                                              BANMAYUN_GROUP_ID_KEY, nil];
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", groupId, @"groupId", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -2498,11 +2416,13 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
          isBlocked:(NSNumber *)isBlocked
             offset:(NSNumber *)offset
              limit:(NSNumber *)limit {
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
+    NSMutableDictionary *userInfo =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
 
     if (type) {
         [params setObject:type forKey:@"type"];
+        [userInfo setObject:type forKey:@"type"];
     }
 
     if (isActivated) {
@@ -2511,6 +2431,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         } else {
             [params setObject:@"false" forKey:@"is_activated"];
         }
+        [userInfo setObject:isActivated forKey:@"isActivated"];
     }
 
     if (isBlocked) {
@@ -2519,14 +2440,17 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         } else {
             [params setObject:@"false" forKey:@"is_blocked"];
         }
+        [userInfo setObject:isBlocked forKey:@"isBlocked"];
     }
 
     if (offset) {
-        [params setObject:offset forKey:BANMAYUN_LIST_OFFSET_KEY];
+        [params setObject:offset forKey:@"offset"];
+        [userInfo setObject:offset forKey:@"offset"];
     }
 
     if (limit) {
         [params setObject:limit forKey:@"limit"];
+        [userInfo setObject:limit forKey:@"offset"];
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/groups"];
@@ -2536,22 +2460,12 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidListGroups:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-
-    if (params) {
-        [userInfo addEntriesFromDictionary:params];
-    }
-
     request.userInfo = userInfo;
     [requests addObject:request];
 }
 
 - (void)listGroups {
-    [self listGroups:nil
-            isAcivated:[NSNumber numberWithBool:YES]
-             isBlocked:[NSNumber numberWithBool:NO]
-                offset:[NSNumber numberWithInteger:0]
-                 limit:nil];
+    [self listGroups:nil isAcivated:nil isBlocked:nil offset:nil limit:nil];
 }
 
 - (void)requestDidListGroups:(BMYRequest *)request {
@@ -2621,8 +2535,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/groups/%@/update", groupId];
     NSMutableDictionary *bodyDict = [NSMutableDictionary dictionary];
 
@@ -2667,15 +2580,14 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidUpdateGroup:)];
     NSMutableDictionary *userInfo =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, groupId,
-                                                              BANMAYUN_GROUP_ID_KEY, nil];
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", groupId, @"groupId", nil];
 
     if (type) {
         [userInfo setObject:[type JsonRepresentation] forKey:@"type"];
     }
 
     if (isVisible) {
-        [userInfo setObject:isVisible forKey:@"is_visible"];
+        [userInfo setObject:isVisible forKey:@"isVisible"];
     }
 
     if (intro) {
@@ -2691,7 +2603,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     }
 
     if (isBlocked) {
-        [userInfo setObject:isBlocked forKey:@"is_blocked"];
+        [userInfo setObject:isBlocked forKey:@"isBlocked"];
     }
 
     request.userInfo = userInfo;
@@ -2763,8 +2675,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/groups/%@", groupId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"DELETE";
@@ -2773,8 +2684,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidDeleteGroup:)];
     NSMutableDictionary *userInfo =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, groupId,
-                                                              BANMAYUN_GROUP_ID_KEY, nil];
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", groupId, @"groupId", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -2833,8 +2743,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/groups/%@/logo", groupId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"POST";
@@ -2851,8 +2760,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidSetGroupLogo:)];
     NSMutableDictionary *userInfo =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, groupId,
-                                                              BANMAYUN_GROUP_ID_KEY, nil];
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", groupId, @"groupId", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -2885,15 +2793,18 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
+    NSMutableDictionary *userInfo =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", groupId, @"groupId", nil];
 
     if (format) {
-        [params setObject:format forKey:BANMAYUN_IMAGE_FORMAT_KEY];
+        [params setObject:format forKey:@"format"];
+        [userInfo setObject:format forKey:@"format"];
     }
 
     if (size) {
-        [params setObject:size forKey:BANMAYUN_IMAGE_SIZE_KEY];
+        [params setObject:size forKey:@"size"];
+        [userInfo setObject:size forKey:@"size"];
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/groups/%@/logo", groupId];
@@ -2904,14 +2815,6 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidGetGroupLogo:)];
-
-    NSMutableDictionary *userInfo =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:groupId, BANMAYUN_GROUP_ID_KEY, nil];
-
-    if (params) {
-        [userInfo addEntriesFromDictionary:params];
-    }
-
     request.userInfo = userInfo;
     [imageLoadRequests setObject:request forKey:[self groupLogoKeyForGroupId:groupId]];
 }
@@ -2931,8 +2834,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         }
     }
 
-    [imageLoadRequests
-            removeObjectForKey:[self groupLogoKeyForGroupId:[request.userInfo objectForKey:BANMAYUN_GROUP_ID_KEY]]];
+    [imageLoadRequests removeObjectForKey:[self groupLogoKeyForGroupId:[request.userInfo objectForKey:@"groupId"]]];
 }
 
 #pragma mark -
@@ -2944,8 +2846,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     }
 
     NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, aUserId,
-                                                              BANMAYUN_USER_ID_KEY, nil];
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", aUserId, @"user_id", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/groups/%@/users", groupId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"POST";
@@ -2953,8 +2854,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidAddGroupUser:)];
     NSMutableDictionary *userInfo = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:groupId, BANMAYUN_GROUP_ID_KEY, [self accessToken], BANMAYUN_ACCESS_TOKEN_KEY,
-                                         aUserId, BANMAYUN_USER_ID_KEY, nil];
+            dictionaryWithObjectsAndKeys:groupId, @"groupId", [self accessToken], @"token", aUserId, @"userId", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -3013,8 +2913,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/groups/%@/users/%@", groupId, aUserId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"GET";
@@ -3022,8 +2921,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidGetGroupUser:)];
     NSMutableDictionary *userInfo = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, groupId, BANMAYUN_GROUP_ID_KEY,
-                                         aUserId, BANMAYUN_USER_ID_KEY, nil];
+            dictionaryWithObjectsAndKeys:[self accessToken], @"token", groupId, @"groupId", aUserId, @"userId", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -3087,11 +2985,13 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
+    NSMutableDictionary *userInfo =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", groupId, @"groupId", nil];
 
     if (role) {
         [params setObject:role forKey:@"role"];
+        [userInfo setObject:role forKey:@"role"];
     }
 
     if (isActivated) {
@@ -3100,6 +3000,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         } else {
             [params setObject:@"false" forKey:@"is_activated"];
         }
+        [userInfo setObject:isActivated forKey:@"isActivated"];
     }
 
     if (isBlocked) {
@@ -3108,14 +3009,17 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         } else {
             [params setObject:@"false" forKey:@"is_blocked"];
         }
+        [userInfo setObject:isBlocked forKey:@"isBlocked"];
     }
 
     if (offset) {
-        [params setObject:offset forKey:BANMAYUN_LIST_OFFSET_KEY];
+        [params setObject:offset forKey:@"offset"];
+        [userInfo setObject:offset forKey:@"offset"];
     }
 
     if (limit) {
         [params setObject:limit forKey:@"limit"];
+        [userInfo setObject:limit forKey:@"limit"];
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/groups/%@/users", groupId];
@@ -3124,13 +3028,6 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidListGroupUsers:)];
-    NSMutableDictionary *userInfo =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:groupId, BANMAYUN_GROUP_ID_KEY, nil];
-
-    if (params) {
-        [userInfo addEntriesFromDictionary:params];
-    }
-
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -3198,8 +3095,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/groups/%@/users/%@/update", groupId, aUserId];
     NSMutableDictionary *bodyDict = [NSMutableDictionary dictionary];
 
@@ -3231,19 +3127,18 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidUpdateGroupUser:)];
     NSMutableDictionary *userInfo = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:groupId, BANMAYUN_GROUP_ID_KEY, aUserId, BANMAYUN_USER_ID_KEY,
-                                         [self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+            dictionaryWithObjectsAndKeys:groupId, @"groupId", aUserId, @"userId", [self accessToken], @"token", nil];
 
     if (role) {
         [userInfo setObject:[role JsonRepresentation] forKey:@"role"];
     }
 
     if (isActivated) {
-        [userInfo setObject:isActivated forKey:@"is_activated"];
+        [userInfo setObject:isActivated forKey:@"isActivated"];
     }
 
     if (isBlocked) {
-        [userInfo setObject:isBlocked forKey:@"is_blocked"];
+        [userInfo setObject:isBlocked forKey:@"isBlocked"];
     }
 
     request.userInfo = userInfo;
@@ -3300,8 +3195,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/groups/%@/users/%@", groupId, aUserId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"DELETE";
@@ -3309,8 +3203,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidRemoveGroupUser:)];
     NSMutableDictionary *userInfo = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:groupId, BANMAYUN_GROUP_ID_KEY, aUserId, BANMAYUN_USER_ID_KEY,
-                                         [self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+            dictionaryWithObjectsAndKeys:groupId, @"groupId", aUserId, @"userId", [self accessToken], @"token", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -3361,8 +3254,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/roots/%@", rootId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"GET";
@@ -3370,8 +3262,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidGetRoot:)];
     NSMutableDictionary *userInfo =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:rootId, BANMAYUN_ROOT_ID_KEY, [self accessToken],
-                                                              BANMAYUN_ACCESS_TOKEN_KEY, nil];
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:rootId, @"rootId", [self accessToken], @"token", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -3430,18 +3321,19 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/roots/%@/default_permission", aRootId];
 
     NSMutableDictionary *bodyDict = [NSMutableDictionary dictionary];
-
+    NSMutableDictionary *userInfo =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", aRootId, @"rootId", nil];
     if (insertableToOwner) {
         if ([insertableToOwner boolValue]) {
             [bodyDict setObject:@"true" forKey:@"insertable_to_owner"];
         } else {
             [bodyDict setObject:@"false" forKey:@"insertable_to_owner"];
         }
+        [userInfo setObject:insertableToOwner forKey:@"insertableToOwner"];
     }
 
     if (readableToOwner) {
@@ -3450,6 +3342,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         } else {
             [bodyDict setObject:@"false" forKey:@"readable_to_owner"];
         }
+        [userInfo setObject:readableToOwner forKey:@"readableToOwner"];
     }
 
     if (writableToOwner) {
@@ -3458,6 +3351,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         } else {
             [bodyDict setObject:@"false" forKey:@"writable_to_owner"];
         }
+        [userInfo setObject:writableToOwner forKey:@"writableToOwner"];
     }
 
     if (deletableToOwner) {
@@ -3466,6 +3360,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         } else {
             [bodyDict setObject:@"false" forKey:@"deletable_to_owner"];
         }
+        [userInfo setObject:deletableToOwner forKey:@"deletableToOwner"];
     }
 
     if (insertableToOthers) {
@@ -3474,6 +3369,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         } else {
             [bodyDict setObject:@"false" forKey:@"insertable_to_others"];
         }
+        [userInfo setObject:insertableToOthers forKey:@"insertableToOthers"];
     }
 
     if (readableToOthers) {
@@ -3482,6 +3378,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         } else {
             [bodyDict setObject:@"false" forKey:@"readable_to_others"];
         }
+        [userInfo setObject:readableToOthers forKey:@"readableToOthers"];
     }
 
     if (writableToOthers) {
@@ -3490,6 +3387,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         } else {
             [bodyDict setObject:@"false" forKey:@"writable_to_others"];
         }
+        [userInfo setObject:writableToOthers forKey:@"writableToOthers"];
     }
 
     if (deletableToOthers) {
@@ -3498,6 +3396,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         } else {
             [bodyDict setObject:@"false" forKey:@"deletable_to_others"];
         }
+        [userInfo setObject:deletableToOthers forKey:@"deletableToOthers"];
     }
 
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
@@ -3507,13 +3406,6 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidSetDefaultPermission:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, aRootId, BANMAYUN_ROOT_ID_KEY,
-                                         insertableToOwner, @"insertable_to_owner", readableToOwner,
-                                         @"readable_to_owner", writableToOwner, @"writable_to_owner", deletableToOwner,
-                                         @"deletable_to_owner", insertableToOthers, @"insertable_to_others",
-                                         readableToOthers, @"readable_to_others", writableToOthers,
-                                         @"writable_to_others", deletableToOthers, @"deletable_to_others", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -3564,17 +3456,16 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, quota, @"quota", nil];
+    NSMutableDictionary *params =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", quota, @"quota", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/roots/%@/quota", aRootId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"POST";
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidSetRootQuota:)];
-    NSDictionary *userInfo =
-            [NSDictionary dictionaryWithObjectsAndKeys:aRootId, BANMAYUN_ROOT_ID_KEY, [self accessToken],
-                                                       BANMAYUN_ACCESS_TOKEN_KEY, quota, @"quota", nil];
+    NSDictionary *userInfo = [NSDictionary
+            dictionaryWithObjectsAndKeys:aRootId, @"rootId", [self accessToken], @"token", quota, @"quota", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -3638,12 +3529,12 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     NSDictionary *fileAttrs = [[NSFileManager defaultManager] attributesOfItemAtPath:sourcePath error:nil];
 
     if (!fileExists || isDir || !fileAttrs) {
-        NSMutableDictionary *userInfo = [NSMutableDictionary
-                dictionaryWithObjectsAndKeys:sourcePath, BANMAYUN_FILE_UPLOAD_SOURCE_PATH_KEY, rootId,
-                                             BANMAYUN_ROOT_ID_KEY, path, BANMAYUN_FILE_DESTINATION_PATH_KEY, nil];
+        NSMutableDictionary *userInfo =
+                [NSMutableDictionary dictionaryWithObjectsAndKeys:sourcePath, @"sourcePath", rootId, @"rootId", path,
+                                                                  @"destinationPath", nil];
 
         if (overwrite) {
-            [userInfo setObject:overwrite forKey:BANMAYUN_FILE_UPLOAD_OVERWRITE_KEY];
+            [userInfo setObject:overwrite forKey:@"overwrite"];
         }
 
         NSInteger errorCode = isDir ? BMYErrorIllegalFileType : BMYErrorFileNotFound;
@@ -3660,18 +3551,17 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/roots/%@/files/p/%@", rootId, path];
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
 
     if (modifiedAtMillis) {
-        [params setObject:modifiedAtMillis forKey:BANMAYUN_FILE_MODIFIED_AT_MILLIS];
+        [params setObject:modifiedAtMillis forKey:@"modified_at_millis"];
     }
 
     if (overwrite) {
         if ([overwrite boolValue]) {
-            [params setObject:@"true" forKey:BANMAYUN_FILE_UPLOAD_OVERWRITE_KEY];
+            [params setObject:@"true" forKey:@"overwrite"];
         } else {
-            [params setObject:@"false" forKey:BANMAYUN_FILE_UPLOAD_OVERWRITE_KEY];
+            [params setObject:@"false" forKey:@"overwrite"];
         }
     }
 
@@ -3686,18 +3576,17 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidPutFile:)];
     request.uploadProgressSelector = @selector(requestPutFileProgress:);
-    request.userInfo = [NSDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY,
-                                                                  sourcePath, BANMAYUN_FILE_UPLOAD_SOURCE_PATH_KEY,
-                                                                  rootId, BANMAYUN_ROOT_ID_KEY, path,
-                                                                  BANMAYUN_FILE_DESTINATION_PATH_KEY, nil];
+    request.userInfo =
+            [NSDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", sourcePath, @"sourcePath", rootId,
+                                                       @"rootId", path, @"destinationPath", nil];
     request.sourcePath = sourcePath;
     [uploadRequests setObject:request forKey:[self putFileByPathKeyWithRootId:rootId path:path]];
 }
 
 - (void)requestPutFileProgress:(BMYRequest *)request {
-    NSString *sourcePath = [(NSDictionary *)request.userInfo objectForKey:BANMAYUN_FILE_UPLOAD_SOURCE_PATH_KEY];
-    NSString *destPath = [request.userInfo objectForKey:BANMAYUN_FILE_DESTINATION_PATH_KEY];
-    NSString *rootId = [request.userInfo objectForKey:BANMAYUN_ROOT_ID_KEY];
+    NSString *sourcePath = [(NSDictionary *)request.userInfo objectForKey:@"sourcePath"];
+    NSString *destPath = [request.userInfo objectForKey:@"destinationPath"];
+    NSString *rootId = [request.userInfo objectForKey:@"rootId"];
 
     if ([delegate respondsToSelector:@selector(restClient:putFileProgress:forRootId:path:fromPath:)]) {
         [delegate restClient:self
@@ -3719,9 +3608,9 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         }
     } else {
         BMYMetadata *metadata = [[BMYMetadata alloc] initWithDictionary:result];
-        NSString *sourcePath = [request.userInfo objectForKey:BANMAYUN_FILE_UPLOAD_SOURCE_PATH_KEY];
-        NSString *destPath = [request.userInfo objectForKey:BANMAYUN_FILE_DESTINATION_PATH_KEY];
-        NSString *rootId = [request.userInfo objectForKey:BANMAYUN_ROOT_ID_KEY];
+        NSString *sourcePath = [request.userInfo objectForKey:@"sourcePath"];
+        NSString *destPath = [request.userInfo objectForKey:@"destinationPath"];
+        NSString *rootId = [request.userInfo objectForKey:@"rootId"];
 
         if ([delegate respondsToSelector:@selector(restClient:donePutFileByPathWithRootId:path:fromPath:metadata:)]) {
             [delegate restClient:self
@@ -3733,10 +3622,8 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     }
 
     [uploadRequests
-            removeObjectForKey:
-                    [self putFileByPathKeyWithRootId:[request.userInfo objectForKey:BANMAYUN_ROOT_ID_KEY]
-                                                  path:[request.userInfo
-                                                               objectForKey:BANMAYUN_FILE_DESTINATION_PATH_KEY]]];
+            removeObjectForKey:[self putFileByPathKeyWithRootId:[request.userInfo objectForKey:@"rootId"]
+                                                             path:[request.userInfo objectForKey:@"destinationPath"]]];
 }
 
 - (void)cancelFilePutWithRootId:(NSString *)rootId path:(NSString *)path {
@@ -3762,19 +3649,18 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/roots/%@/files/p/%@", rootId, path];
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
 
     if (version) {
         [params setObject:version forKey:@"version"];
     }
 
     if (offset) {
-        [params setObject:offset forKey:BANMAYUN_FILE_OFFSET_KEY];
+        [params setObject:offset forKey:@"offset"];
     }
 
     if (bytes) {
-        [params setObject:bytes forKey:BANMAYUN_FILE_LOADSIZE_KEY];
+        [params setObject:bytes forKey:@"bytes"];
     }
 
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
@@ -3785,18 +3671,18 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     request.resultFilename = toPath;
     request.downloadProgressSelector = @selector(requestGetFileByPathProgress:);
     NSMutableDictionary *userInfo =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:path, BANMAYUN_FILE_PATH_KEY, toPath, @"toPath", nil];
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:path, @"path", toPath, @"toPath", nil];
 
     if (version) {
         [userInfo setObject:version forKey:@"version"];
     }
 
     if (offset) {
-        [userInfo setObject:offset forKey:BANMAYUN_FILE_OFFSET_KEY];
+        [userInfo setObject:offset forKey:@"offset"];
     }
 
     if (bytes) {
-        [userInfo setObject:bytes forKey:BANMAYUN_FILE_LOADSIZE_KEY];
+        [userInfo setObject:bytes forKey:@"bytes"];
     }
 
     request.userInfo = userInfo;
@@ -3821,7 +3707,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
 }
 
 - (void)requestDidGetFileByPath:(BMYRequest *)request {
-    NSString *path = [request.userInfo objectForKey:BANMAYUN_FILE_PATH_KEY];
+    NSString *path = [request.userInfo objectForKey:@"path"];
 
     if (request.error) {
         [self checkForAuthenticationFailure:request];
@@ -3877,16 +3763,14 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/roots/%@/files/p/%@", rootId, path];
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"DELETE";
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidTrashFileByPath:)];
-    NSMutableDictionary *userInfo =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, rootId,
-                                                              BANMAYUN_ROOT_ID_KEY, path, BANMAYUN_FILE_PATH_KEY, nil];
+    NSMutableDictionary *userInfo = [NSMutableDictionary
+            dictionaryWithObjectsAndKeys:[self accessToken], @"token", rootId, @"rootId", path, @"path", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -3950,8 +3834,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
 
     if (!fileExists || isDir || !fileAttrs) {
         NSMutableDictionary *userInfo = [NSMutableDictionary
-                dictionaryWithObjectsAndKeys:sourcePath, BANMAYUN_FILE_UPLOAD_SOURCE_PATH_KEY, rootId,
-                                             BANMAYUN_ROOT_ID_KEY, metaId, BANMAYUN_FILE_META_ID_KEY, nil];
+                dictionaryWithObjectsAndKeys:sourcePath, @"sourcePath", rootId, @"rootId", metaId, @"metaId", nil];
         NSInteger errorCode = isDir ? BMYErrorIllegalFileType : BMYErrorFileNotFound;
         NSError *error = [NSError errorWithDomain:BMYErrorDomain code:errorCode userInfo:userInfo];
         NSString *errorMsg = isDir ? NSLocalizedString(@"Unable to upload folders", @"不能上传文件夹")
@@ -3967,9 +3850,9 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
 
     NSString *fullPath = [NSString stringWithFormat:@"/roots/%@/files/%@", rootId, metaId];
     NSMutableDictionary *params = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY,
+            dictionaryWithObjectsAndKeys:[self accessToken], @"token",
                                          modifiedAtMillis ? modifiedAtMillis : [NSNumber numberWithLong:0],
-                                         BANMAYUN_FILE_MODIFIED_AT_MILLIS, nil];
+                                         @"modified_at_millis", nil];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"POST";
 
@@ -3983,17 +3866,16 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                         selector:@selector(requestDidUploadFileById:)];
     request.uploadProgressSelector = @selector(requestUploadFileByIdProgress:);
     request.userInfo =
-            [NSDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, sourcePath,
-                                                       BANMAYUN_FILE_UPLOAD_SOURCE_PATH_KEY, rootId,
-                                                       BANMAYUN_ROOT_ID_KEY, metaId, BANMAYUN_FILE_META_ID_KEY, nil];
+            [NSDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", sourcePath, @"sourcePath", rootId,
+                                                       @"rootId", metaId, @"metaId", nil];
     request.sourcePath = sourcePath;
     [uploadRequests setObject:request forKey:[self uploadFileByIdKeyWithRootId:rootId metaId:metaId]];
 }
 
 - (void)requestUploadFileByIdProgress:(BMYRequest *)request {
-    NSString *rootId = [request.userInfo objectForKey:BANMAYUN_ROOT_ID_KEY];
-    NSString *metaId = [request.userInfo objectForKey:BANMAYUN_FILE_META_ID_KEY];
-    NSString *sourcePath = [request.userInfo objectForKey:BANMAYUN_FILE_UPLOAD_SOURCE_PATH_KEY];
+    NSString *rootId = [request.userInfo objectForKey:@"rootId"];
+    NSString *metaId = [request.userInfo objectForKey:@"metaId"];
+    NSString *sourcePath = [request.userInfo objectForKey:@"sourcePath"];
 
     if ([delegate respondsToSelector:@selector(restClient:uploadFileByIdProgress:forRootId:metaId:fromPath:)]) {
         [delegate restClient:self
@@ -4015,9 +3897,9 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         }
     } else {
         BMYMetadata *metadata = [[BMYMetadata alloc] initWithDictionary:result];
-        NSString *sourcePath = [request.userInfo objectForKey:BANMAYUN_FILE_UPLOAD_SOURCE_PATH_KEY];
-        NSString *metaId = [request.userInfo objectForKey:BANMAYUN_FILE_META_ID_KEY];
-        NSString *rootId = [request.userInfo objectForKey:BANMAYUN_ROOT_ID_KEY];
+        NSString *sourcePath = [request.userInfo objectForKey:@"sourcePath"];
+        NSString *metaId = [request.userInfo objectForKey:@"metaId"];
+        NSString *rootId = [request.userInfo objectForKey:@"rootId"];
 
         if ([delegate respondsToSelector:@selector(restClient:uploadedFileByIdForRootId:metaId:fromPath:metadata:)]) {
             [delegate restClient:self
@@ -4028,10 +3910,8 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         }
     }
 
-    [uploadRequests
-            removeObjectForKey:[self uploadFileByIdKeyWithRootId:[request.userInfo objectForKey:BANMAYUN_ROOT_ID_KEY]
-                                                            metaId:[request.userInfo
-                                                                           objectForKey:BANMAYUN_FILE_META_ID_KEY]]];
+    [uploadRequests removeObjectForKey:[self uploadFileByIdKeyWithRootId:[request.userInfo objectForKey:@"rootId"]
+                                                                    metaId:[request.userInfo objectForKey:@"metaId"]]];
 }
 
 - (void)cancelFileUploadByIdWithRootId:(NSString *)rootId metaId:(NSString *)metaId {
@@ -4061,19 +3941,18 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/roots/%@/files/%@", rootId, metaId];
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
 
     if (version) {
         [params setObject:version forKey:@"version"];
     }
 
     if (offset) {
-        [params setObject:offset forKey:BANMAYUN_FILE_OFFSET_KEY];
+        [params setObject:offset forKey:@"offset"];
     }
 
     if (bytes) {
-        [params setObject:bytes forKey:BANMAYUN_FILE_LOADSIZE_KEY];
+        [params setObject:bytes forKey:@"bytes"];
     }
 
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
@@ -4083,9 +3962,8 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                         selector:@selector(requestDidGetFileById:)];
     request.resultFilename = toPath;
     request.downloadProgressSelector = @selector(requestGetFileByIdProgress:);
-    NSMutableDictionary *userInfo =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:rootId, BANMAYUN_ROOT_ID_KEY, metaId,
-                                                              BANMAYUN_FILE_META_ID_KEY, toPath, @"toPath", nil];
+    NSMutableDictionary *userInfo = [NSMutableDictionary
+            dictionaryWithObjectsAndKeys:rootId, @"rootId", metaId, @"metaId", toPath, @"toPath", nil];
 
     if (version) {
         [userInfo setObject:version forKey:@"version"];
@@ -4113,8 +3991,8 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
 }
 
 - (void)requestDidGetFileById:(BMYRequest *)request {
-    NSString *rootId = [request.userInfo objectForKey:BANMAYUN_ROOT_ID_KEY];
-    NSString *metaId = [request.userInfo objectForKey:BANMAYUN_FILE_META_ID_KEY];
+    NSString *rootId = [request.userInfo objectForKey:@"rootId"];
+    NSString *metaId = [request.userInfo objectForKey:@"metaId"];
 
     if (request.error) {
         [self checkForAuthenticationFailure:request];
@@ -4161,16 +4039,14 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/roots/%@/files/%@", rootId, metaId];
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"DELETE";
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidTrashFileById:)];
     NSMutableDictionary *userInfo = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, rootId, BANMAYUN_ROOT_ID_KEY,
-                                         metaId, BANMAYUN_FILE_META_ID_KEY, nil];
+            dictionaryWithObjectsAndKeys:[self accessToken], @"token", rootId, @"rootId", metaId, @"metaId", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -4222,16 +4098,14 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/roots/%@/files/%@/meta", rootId, metaId];
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"GET";
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidGetFileMeta:)];
     NSMutableDictionary *userInfo = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, rootId, BANMAYUN_ROOT_ID_KEY,
-                                         metaId, BANMAYUN_FILE_META_ID_KEY, nil];
+            dictionaryWithObjectsAndKeys:[self accessToken], @"token", rootId, @"rootId", metaId, @"metaId", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -4307,15 +4181,14 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/roots/%@/files/%@/thumbnail", rootId, metaId];
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
 
     if (format) {
-        [params setObject:format forKey:BANMAYUN_IMAGE_FORMAT_KEY];
+        [params setObject:format forKey:@"format"];
     }
 
     if (size) {
-        [params setObject:size forKey:BANMAYUN_IMAGE_SIZE_KEY];
+        [params setObject:size forKey:@"size"];
     }
 
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
@@ -4325,15 +4198,14 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                         selector:@selector(requestDidGetFileThumbnail:)];
     request.resultFilename = toPath;
     NSMutableDictionary *userInfo = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, rootId, BANMAYUN_ROOT_ID_KEY,
-                                         metaId, BANMAYUN_FILE_META_ID_KEY, nil];
+            dictionaryWithObjectsAndKeys:[self accessToken], @"token", rootId, @"rootId", metaId, @"metaId", nil];
 
     if (format) {
-        [userInfo setObject:format forKey:BANMAYUN_IMAGE_FORMAT_KEY];
+        [userInfo setObject:format forKey:@"format"];
     }
 
     if (size) {
-        [userInfo setObject:size forKey:BANMAYUN_IMAGE_SIZE_KEY];
+        [userInfo setObject:size forKey:@"size"];
     }
 
     [imageLoadRequests setObject:request
@@ -4357,10 +4229,10 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         }
     }
 
-    NSString *rootId = [request.userInfo objectForKey:BANMAYUN_ROOT_ID_KEY];
-    NSString *metaId = [request.userInfo objectForKey:BANMAYUN_FILE_META_ID_KEY];
-    NSString *format = [request.userInfo objectForKey:BANMAYUN_IMAGE_FORMAT_KEY];
-    NSString *size = [request.userInfo objectForKey:BANMAYUN_IMAGE_SIZE_KEY];
+    NSString *rootId = [request.userInfo objectForKey:@"rootId"];
+    NSString *metaId = [request.userInfo objectForKey:@"metaId"];
+    NSString *format = [request.userInfo objectForKey:@"format"];
+    NSString *size = [request.userInfo objectForKey:@"size"];
 
     [imageLoadRequests removeObjectForKey:[self thumbnailKeyForRootId:rootId metaId:metaId format:format size:size]];
 }
@@ -4389,15 +4261,17 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
-
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
+    NSMutableDictionary *userInfo = [NSMutableDictionary
+            dictionaryWithObjectsAndKeys:[self accessToken], @"token", rootId, @"rootId", metaId, @"metaId", nil];
     if (offset) {
-        [params setObject:offset forKey:BANMAYUN_LIST_OFFSET_KEY];
+        [params setObject:offset forKey:@"offset"];
+        [userInfo setObject:offset forKey:@"offset"];
     }
 
     if (limit) {
         [params setObject:limit forKey:@"limit"];
+        [userInfo setObject:limit forKey:@"limit"];
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/roots/%@/files/%@/revisions", rootId, metaId];
@@ -4406,13 +4280,6 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidListFileRevisions:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:rootId, BANMAYUN_ROOT_ID_KEY, metaId, BANMAYUN_FILE_META_ID_KEY, nil];
-
-    if (params) {
-        [userInfo addEntriesFromDictionary:params];
-    }
-
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -4465,23 +4332,21 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                      modifiedAtMillis:(NSNumber *)modifiedAtMillis {
     NSString *fullPath = [NSString stringWithFormat:@"/fileops/commit_chunked_upload"];
     NSMutableDictionary *params = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, rootId ? rootId : @"",
-                                         BANMAYUN_ROOT_ID_KEY, path ? path : @"", BANMAYUN_FILE_PATH_KEY,
-                                         uploadId ? uploadId : @"", BANMAYUN_FILE_CHUNKUPLOAD_UPLOADID_KEY,
+            dictionaryWithObjectsAndKeys:[self accessToken], @"token", rootId ? rootId : @"", @"root_id",
+                                         path ? path : @"", @"path", uploadId ? uploadId : @"", @"upload_id",
                                          modifiedAtMillis ? modifiedAtMillis : [NSNumber numberWithLong:0],
-                                         BANMAYUN_FILE_MODIFIED_AT_MILLIS, nil];
+                                         @"modified_at_millis", nil];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
 
     urlRequest.HTTPMethod = @"POST";
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidCommitChunkedUpload:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-
-    if (params) {
-        [userInfo addEntriesFromDictionary:params];
-    }
-
+    NSMutableDictionary *userInfo = [NSMutableDictionary
+            dictionaryWithObjectsAndKeys:[self accessToken], @"token", rootId ? rootId : @"", @"rootId",
+                                         path ? path : @"", @"path", uploadId ? uploadId : @"", @"uploadId",
+                                         modifiedAtMillis ? modifiedAtMillis : [NSNumber numberWithLong:0],
+                                         @"modified_at_millis", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -4533,19 +4398,17 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/fileops/copy"];
-    NSMutableDictionary *params = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, rootId, BANMAYUN_ROOT_ID_KEY,
-                                         path, BANMAYUN_FILE_PATH_KEY, toPath, @"to_path", nil];
+    NSMutableDictionary *params =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", rootId, @"root_id", path,
+                                                              @"path", toPath, @"to_path", nil];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"POST";
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidCopyFile:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-
-    if (params) {
-        [userInfo addEntriesFromDictionary:params];
-    }
+    NSMutableDictionary *userInfo =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", rootId, @"rootId", path,
+                                                              @"path", toPath, @"toPath", nil];
 
     request.userInfo = userInfo;
     [requests addObject:request];
@@ -4598,23 +4461,21 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/fileops/create_folder"];
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, rootId,
-                                                              BANMAYUN_ROOT_ID_KEY, path, BANMAYUN_FILE_PATH_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary
+            dictionaryWithObjectsAndKeys:[self accessToken], @"token", rootId, @"root_id", path, @"path", nil];
     if (modifiedAtMillis) {
-        [params setObject:modifiedAtMillis forKey:BANMAYUN_FILE_MODIFIED_AT_MILLIS];
+        [params setObject:modifiedAtMillis forKey:@"modified_at_millis"];
     }
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"POST";
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidCreateFolder:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-
-    if (params) {
-        [userInfo addEntriesFromDictionary:params];
+    NSMutableDictionary *userInfo = [NSMutableDictionary
+            dictionaryWithObjectsAndKeys:[self accessToken], @"token", rootId, @"rootId", path, @"path", nil];
+    if (modifiedAtMillis) {
+        [userInfo setObject:modifiedAtMillis forKey:@"modified_at_millis"];
     }
-
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -4666,9 +4527,8 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/fileops/get_meta"];
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, rootId,
-                                                              BANMAYUN_ROOT_ID_KEY, path, BANMAYUN_FILE_PATH_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary
+            dictionaryWithObjectsAndKeys:[self accessToken], @"token", rootId, @"root_id", path, @"path", nil];
 
     if (list) {
         if ([list boolValue]) {
@@ -4683,12 +4543,11 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidGetMetaOfFileOps:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-
-    if (params) {
-        [userInfo addEntriesFromDictionary:params];
+    NSMutableDictionary *userInfo = [NSMutableDictionary
+            dictionaryWithObjectsAndKeys:[self accessToken], @"token", rootId, @"rootId", path, @"path", nil];
+    if (list) {
+        [userInfo setObject:list forKey:@"list"];
     }
-
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -4740,21 +4599,16 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/fileops/list_folder"];
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, rootId,
-                                                              BANMAYUN_ROOT_ID_KEY, path, BANMAYUN_FILE_PATH_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary
+            dictionaryWithObjectsAndKeys:[self accessToken], @"token", rootId, @"root_id", path, @"path", nil];
 
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"POST";
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidListFolderOfFileOps:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-
-    if (params) {
-        [userInfo addEntriesFromDictionary:params];
-    }
-
+    NSMutableDictionary *userInfo = [NSMutableDictionary
+            dictionaryWithObjectsAndKeys:[self accessToken], @"token", rootId, @"rootId", path, @"path", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -4815,21 +4669,18 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/fileops/move"];
-    NSMutableDictionary *params = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, rootId, BANMAYUN_ROOT_ID_KEY,
-                                         path, BANMAYUN_FILE_PATH_KEY, toPath, @"to_path", nil];
+    NSMutableDictionary *params =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", rootId, @"root_id", path,
+                                                              @"path", toPath, @"to_path", nil];
 
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"POST";
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidMoveOfFileOps:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-
-    if (params) {
-        [userInfo addEntriesFromDictionary:params];
-    }
-
+    NSMutableDictionary *userInfo =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", rootId, @"rootId", path,
+                                                              @"path", toPath, @"toPath", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -4881,9 +4732,8 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/fileops/rollback"];
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, rootId,
-                                                              BANMAYUN_ROOT_ID_KEY, path, BANMAYUN_FILE_PATH_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary
+            dictionaryWithObjectsAndKeys:[self accessToken], @"token", rootId, @"root_id", path, @"path", nil];
 
     if (toVersion) {
         [params setObject:toVersion forKey:@"to_version"];
@@ -4894,10 +4744,10 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidRollbackOfFileOps:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-
-    if (params) {
-        [userInfo addEntriesFromDictionary:params];
+    NSMutableDictionary *userInfo = [NSMutableDictionary
+            dictionaryWithObjectsAndKeys:[self accessToken], @"token", rootId, @"rootId", path, @"path", nil];
+    if (toVersion) {
+        [userInfo setObject:toVersion forKey:@"toVersion"];
     }
 
     request.userInfo = userInfo;
@@ -4955,16 +4805,16 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/fileops/thunder_upload"];
-    NSMutableDictionary *params = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, rootId, BANMAYUN_ROOT_ID_KEY,
-                                         path, BANMAYUN_FILE_PATH_KEY, md5, @"md5", nil];
+    NSMutableDictionary *params =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", rootId, @"root_id", path,
+                                                              @"path", md5, @"md5", nil];
 
     if (bytes) {
         [params setObject:bytes forKey:@"bytes"];
     }
 
     if (modifiedAtMillis) {
-        [params setObject:modifiedAtMillis forKey:@"modified_by_millis"];
+        [params setObject:modifiedAtMillis forKey:@"modified_at_millis"];
     }
 
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
@@ -4972,10 +4822,14 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidThunderUpdateOfFileOps:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-
-    if (params) {
-        [userInfo addEntriesFromDictionary:params];
+    NSMutableDictionary *userInfo =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", rootId, @"rootId", path,
+                                                              @"path", md5, @"md5", nil];
+    if (bytes) {
+        [userInfo setObject:bytes forKey:@"bytes"];
+    }
+    if (modifiedAtMillis) {
+        [userInfo setObject:modifiedAtMillis forKey:@"mofifiedAtMillis"];
     }
 
     request.userInfo = userInfo;
@@ -5031,12 +4885,11 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/fileops/utime_folder"];
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, rootId,
-                                                              BANMAYUN_ROOT_ID_KEY, path, BANMAYUN_FILE_PATH_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary
+            dictionaryWithObjectsAndKeys:[self accessToken], @"token", rootId, @"root_id", path, @"path", nil];
 
     if (modifiedAtMillis) {
-        [params setObject:modifiedAtMillis forKey:BANMAYUN_FILE_MODIFIED_AT_MILLIS];
+        [params setObject:modifiedAtMillis forKey:@"modified_at_millis"];
     }
 
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
@@ -5044,12 +4897,11 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidUtimeFolderOfFileOps:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-
-    if (params) {
-        [userInfo addEntriesFromDictionary:params];
+    NSMutableDictionary *userInfo = [NSMutableDictionary
+            dictionaryWithObjectsAndKeys:[self accessToken], @"token", rootId, @"rootId", path, @"path", nil];
+    if (modifiedAtMillis) {
+        [userInfo setObject:modifiedAtMillis forKey:@"modifiedAtMillis"];
     }
-
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -5110,9 +4962,10 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/fileops/set_permission"];
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, rootId,
-                                                              BANMAYUN_ROOT_ID_KEY, path, BANMAYUN_FILE_PATH_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary
+            dictionaryWithObjectsAndKeys:[self accessToken], @"token", rootId, @"root_id", path, @"path", nil];
+    NSMutableDictionary *userInfo = [NSMutableDictionary
+            dictionaryWithObjectsAndKeys:[self accessToken], @"token", rootId, @"rootId", path, @"path", nil];
     NSMutableDictionary *bodyDict = [NSMutableDictionary dictionary];
 
     if (insertableOwner) {
@@ -5121,6 +4974,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         } else {
             [bodyDict setObject:@"false" forKey:@"insertable_to_owner"];
         }
+        [userInfo setObject:insertableOwner forKey:@"insertableToOwner"];
     }
 
     if (readableOwner) {
@@ -5129,6 +4983,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         } else {
             [bodyDict setObject:@"false" forKey:@"readable_to_owner"];
         }
+        [userInfo setObject:readableOwner forKey:@"readableToOwner"];
     }
 
     if (writableOwner) {
@@ -5137,6 +4992,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         } else {
             [bodyDict setObject:@"false" forKey:@"writable_to_owner"];
         }
+        [userInfo setObject:writableOwner forKey:@"writableToOwner"];
     }
 
     if (deletableOwner) {
@@ -5145,6 +5001,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         } else {
             [bodyDict setObject:@"false" forKey:@"deletable_to_owner"];
         }
+        [userInfo setObject:deletableOwner forKey:@"deletableToOwner"];
     }
 
     if (insertableOthers) {
@@ -5153,6 +5010,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         } else {
             [bodyDict setObject:@"false" forKey:@"insertable_to_others"];
         }
+        [userInfo setObject:insertableOthers forKey:@"insertableToOthers"];
     }
 
     if (readableOthers) {
@@ -5161,6 +5019,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         } else {
             [bodyDict setObject:@"false" forKey:@"readable_to_others"];
         }
+        [userInfo setObject:readableOthers forKey:@"readableToOthers"];
     }
 
     if (writableOthers) {
@@ -5169,6 +5028,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         } else {
             [bodyDict setObject:@"false" forKey:@"writable_to_others"];
         }
+        [userInfo setObject:writableOthers forKey:@"writableToOthers"];
     }
 
     if (deletableOthers) {
@@ -5177,6 +5037,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         } else {
             [bodyDict setObject:@"false" forKey:@"deletable_to_others"];
         }
+        [userInfo setObject:deletableOthers forKey:@"deletableToOthers"];
     }
 
     NSString *bodyStr = [bodyDict JsonRepresentation];
@@ -5189,12 +5050,6 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidSetPermissionOfFileOps:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-
-    if (params) {
-        [userInfo addEntriesFromDictionary:params];
-    }
-
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -5247,20 +5102,15 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
 
     NSString *fullPath = [NSString stringWithFormat:@"/fileops/list_permissions"];
     NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, rootId,
-                                                              BANMAYUN_ROOT_ID_KEY, nil];
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", rootId, @"root_id", nil];
 
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"POST";
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidListPermissionsOfFileOps:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-
-    if (params) {
-        [userInfo addEntriesFromDictionary:params];
-    }
-
+    NSMutableDictionary *userInfo =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", rootId, @"rootId", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -5315,11 +5165,11 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                     [NSMutableDictionary dictionaryWithObjectsAndKeys:localPath, @"fromPath", nil];
 
             if (offset) {
-                [userInfo setObject:offset forKey:BANMAYUN_FILE_CHUNKUPLOAD_OFFSET_KEY];
+                [userInfo setObject:offset forKey:@"offset"];
             }
 
             if (uploadId) {
-                [userInfo setObject:uploadId forKey:BANMAYUN_FILE_CHUNKUPLOAD_UPLOADID_KEY];
+                [userInfo setObject:uploadId forKey:@"uploadId"];
             }
 
             NSError *error = [NSError errorWithDomain:BMYErrorDomain code:BMYErrorFileNotFound userInfo:userInfo];
@@ -5343,11 +5193,11 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
 
     if (offset) {
-        [params setObject:offset forKey:BANMAYUN_FILE_CHUNKUPLOAD_OFFSET_KEY];
+        [params setObject:offset forKey:@"offset"];
     }
 
     if (uploadId) {
-        [params setObject:uploadId forKey:BANMAYUN_FILE_CHUNKUPLOAD_UPLOADID_KEY];
+        [params setObject:uploadId forKey:@"upload_id"];
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/chunked_upload"];
@@ -5366,11 +5216,11 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:localPath, @"fromPath", nil];
 
     if (offset) {
-        [userInfo setObject:offset forKey:BANMAYUN_FILE_CHUNKUPLOAD_OFFSET_KEY];
+        [userInfo setObject:offset forKey:@"offset"];
     }
 
     if (uploadId) {
-        [userInfo setObject:uploadId forKey:BANMAYUN_FILE_CHUNKUPLOAD_UPLOADID_KEY];
+        [userInfo setObject:uploadId forKey:@"uploadId"];
     }
 
     request.userInfo = userInfo;
@@ -5379,8 +5229,8 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
 }
 
 - (void)requestChunkedUploadProgress:(BMYRequest *)request {
-    NSString *uploadId = [request.userInfo objectForKey:BANMAYUN_FILE_CHUNKUPLOAD_UPLOADID_KEY];
-    long offset = [[request.userInfo objectForKey:BANMAYUN_FILE_CHUNKUPLOAD_OFFSET_KEY] longValue];
+    NSString *uploadId = [request.userInfo objectForKey:@"uploadId"];
+    long offset = [[request.userInfo objectForKey:@"offset"] longValue];
     NSString *fromPath = [request.userInfo objectForKey:@"fromPath"];
 
     if ([delegate respondsToSelector:@selector(restClient:chunkedUploadProgress:forFile:offset:fromPath:)]) {
@@ -5400,8 +5250,8 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
             [delegate restClient:self chunkedUploadFailedWithError:request.error];
         }
     } else {
-        NSString *uploadId = [resp objectForKey:BANMAYUN_FILE_CHUNKUPLOAD_UPLOADID_KEY];
-        long newOffset = [[resp objectForKey:BANMAYUN_FILE_CHUNKUPLOAD_OFFSET_KEY] longValue];
+        NSString *uploadId = [resp objectForKey:@"uploadId"];
+        long newOffset = [[resp objectForKey:@"offset"] longValue];
         NSString *localPath = [request.userInfo objectForKey:@"fromPath"];
 
         if ([delegate respondsToSelector:@selector(restClient:chunkedUpload:newOffset:fromFile:)]) {
@@ -5420,8 +5270,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/roots/%@/files/%@/comments", rootId, metaId];
     NSMutableDictionary *bodyDict = [NSMutableDictionary dictionary];
 
@@ -5439,10 +5288,9 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidCreateComment:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:rootId, BANMAYUN_ROOT_ID_KEY, metaId, BANMAYUN_FILE_META_ID_KEY,
-                                         [self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, contents ? contents : @"",
-                                         @"contents", nil];
+    NSMutableDictionary *userInfo =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:rootId, @"rootId", metaId, @"metaId", [self accessToken],
+                                                              @"token", contents ? contents : @"", @"contents", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -5493,17 +5341,16 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/roots/%@/files/%@/comments/%@", rootId, metaId, commentId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"GET";
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidGetComment:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:rootId, BANMAYUN_ROOT_ID_KEY, metaId, BANMAYUN_FILE_META_ID_KEY, commentId,
-                                         BANMAYUN_COMMENT_ID_KEY, [self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *userInfo =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:rootId, @"rootId", metaId, @"metaId", commentId,
+                                                              @"commentId", [self accessToken], @"token", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -5554,11 +5401,10 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
 
     if (offset) {
-        [params setObject:offset forKey:BANMAYUN_LIST_OFFSET_KEY];
+        [params setObject:offset forKey:@"offset"];
     }
 
     if (limit) {
@@ -5572,10 +5418,12 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidListComments:)];
     NSMutableDictionary *userInfo = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:rootId, BANMAYUN_ROOT_ID_KEY, metaId, BANMAYUN_FILE_META_ID_KEY, nil];
-
-    if (params) {
-        [userInfo addEntriesFromDictionary:params];
+            dictionaryWithObjectsAndKeys:rootId, @"rootId", metaId, @"metaId", [self accessToken], @"token", nil];
+    if (offset) {
+        [userInfo setObject:offset forKey:@"offset"];
+    }
+    if (limit) {
+        [userInfo setObject:limit forKey:@"limit"];
     }
 
     request.userInfo = userInfo;
@@ -5633,17 +5481,16 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/roots/%@/files/%@/comments/%@", rootId, metaId, commentId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"DELETE";
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidDeleteComment:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:rootId, BANMAYUN_ROOT_ID_KEY, metaId, BANMAYUN_FILE_META_ID_KEY, commentId,
-                                         BANMAYUN_COMMENT_ID_KEY, [self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *userInfo =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:rootId, @"rootId", metaId, @"metaId", commentId,
+                                                              @"commentId", [self accessToken], @"token", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -5694,8 +5541,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/roots/%@/files/%@/comments", rootId, metaId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"DELETE";
@@ -5704,8 +5550,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                         selector:@selector(requestDidDeleteAllComments:)];
 
     NSMutableDictionary *userInfo = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:rootId, BANMAYUN_ROOT_ID_KEY, metaId, BANMAYUN_FILE_META_ID_KEY,
-                                         [self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+            dictionaryWithObjectsAndKeys:rootId, @"rootId", metaId, @"metaId", [self accessToken], @"token", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -5737,15 +5582,14 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
 
     if (passwd) {
         [params setObject:passwd forKey:@"password"];
     }
 
     if (expiresAt) {
-        [params setObject:expiresAt forKey:@"expires_at"];
+        [params setObject:expiresAt forKey:@"expires_at_millis"];
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/roots/%@/files/%@/shares", rootId, metaId];
@@ -5756,10 +5600,12 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidCreateShare:)];
     NSMutableDictionary *userInfo = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:rootId, BANMAYUN_ROOT_ID_KEY, metaId, BANMAYUN_FILE_META_ID_KEY, nil];
-
-    if (params) {
-        [userInfo addEntriesFromDictionary:params];
+            dictionaryWithObjectsAndKeys:rootId, @"rootId", metaId, @"metaId", [self accessToken], @"token", nil];
+    if (passwd) {
+        [userInfo setObject:passwd forKey:@"password"];
+    }
+    if (expiresAt) {
+        [userInfo setObject:expiresAt forKey:@"expiresAtMillis"];
     }
 
     request.userInfo = userInfo;
@@ -5812,17 +5658,16 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/roots/%@/files/%@/shares/%@", rootId, metaId, shareId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"GET";
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidGetShare:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:rootId, BANMAYUN_ROOT_ID_KEY, metaId, BANMAYUN_FILE_META_ID_KEY, shareId,
-                                         BANMAYUN_SHARE_ID_KEY, [self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *userInfo =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:rootId, @"rootId", metaId, @"metaId", shareId, @"shareId",
+                                                              [self accessToken], @"token", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -5873,15 +5718,18 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
 
+    NSMutableDictionary *userInfo = [NSMutableDictionary
+            dictionaryWithObjectsAndKeys:rootId, @"rootId", metaId, @"metaId", [self accessToken], @"token", nil];
     if (offset) {
-        [params setObject:offset forKey:BANMAYUN_LIST_OFFSET_KEY];
+        [params setObject:offset forKey:@"offset"];
+        [userInfo setObject:offset forKey:@"offset"];
     }
 
     if (limit) {
         [params setObject:limit forKey:@"limit"];
+        [userInfo setObject:limit forKey:@"limit"];
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/roots/%@/files/%@/shares", rootId, metaId];
@@ -5890,13 +5738,6 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidListShares:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:rootId, BANMAYUN_ROOT_ID_KEY, metaId, BANMAYUN_FILE_META_ID_KEY, nil];
-
-    if (params) {
-        [userInfo addEntriesFromDictionary:params];
-    }
-
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -5952,17 +5793,16 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/roots/%@/files/%@/shares/%@", rootId, metaId, shareId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"DELETE";
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidDeleteShare:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:rootId, BANMAYUN_ROOT_ID_KEY, metaId, BANMAYUN_FILE_META_ID_KEY, shareId,
-                                         BANMAYUN_SHARE_ID_KEY, [self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *userInfo =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:rootId, @"rootId", metaId, @"metaId", shareId, @"shareId",
+                                                              [self accessToken], @"token", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -6013,8 +5853,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/roots/%@/files/%@/shares", rootId, metaId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"DELETE";
@@ -6022,8 +5861,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidDeleteAllShares:)];
     NSMutableDictionary *userInfo = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:rootId, BANMAYUN_ROOT_ID_KEY, metaId, BANMAYUN_FILE_META_ID_KEY,
-                                         [self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+            dictionaryWithObjectsAndKeys:rootId, @"rootId", metaId, @"metaId", [self accessToken], @"token", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -6050,16 +5888,15 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/roots/%@/trashes/%@", rootId, trashId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"GET";
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidGetTrash:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:rootId, BANMAYUN_ROOT_ID_KEY, trashId, BANMAYUN_TRASH_ID_KEY, nil];
+    NSMutableDictionary *userInfo =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:rootId, @"rootId", trashId, @"trashId", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -6110,15 +5947,16 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
-
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:rootId, @"root_id", nil];
     if (offset) {
-        [params setObject:offset forKey:BANMAYUN_LIST_OFFSET_KEY];
+        [params setObject:offset forKey:@"offset"];
+        [userInfo setObject:offset forKey:@"offset"];
     }
 
     if (limit) {
         [params setObject:limit forKey:@"limit"];
+        [userInfo setObject:limit forKey:@"limit"];
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/roots/%@/trashes", rootId];
@@ -6128,13 +5966,6 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidListTrashes:)];
-    NSMutableDictionary *userInfo =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:rootId, BANMAYUN_ROOT_ID_KEY, nil];
-
-    if (params) {
-        [userInfo addEntriesFromDictionary:params];
-    }
-
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -6154,7 +5985,6 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         SEL sel = @selector(parseListTrashesResultListWithRequest:resultThread:);
         [self genInvocationObjectForCallingParseFun:sel request:request];
     }
-
     [requests removeObject:request];
 }
 
@@ -6174,9 +6004,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
 
 - (void)parseListTrashesResultListFailedForRequest:(BMYRequest *)request {
     NSError *error = [NSError errorWithDomain:BMYErrorDomain code:BMYErrorInvalidResponse userInfo:request.userInfo];
-
     BMYLogWarning(@"BanmayunSDK: error parsing list");
-
     if ([delegate respondsToSelector:@selector(restClient:listTrashesFailedWithError:)]) {
         [delegate restClient:self listTrashesFailedWithError:error];
     }
@@ -6190,8 +6018,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/roots/%@/trashes/%@", rootId, trashId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"DELETE";
@@ -6199,8 +6026,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidDeleteTrash:)];
     NSMutableDictionary *userInfo = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:rootId, BANMAYUN_ROOT_ID_KEY, trashId, BANMAYUN_TRASH_ID_KEY,
-                                         [self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+            dictionaryWithObjectsAndKeys:rootId, @"rootId", trashId, @"trashId", [self accessToken], @"token", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -6251,8 +6077,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
     NSString *fullPath = [NSString stringWithFormat:@"/roots/%@/trashes", rootId];
     NSMutableURLRequest *urlRequest = [self requestWithHost:kBMYBanmayunAPIHost path:fullPath parameter:params];
     urlRequest.HTTPMethod = @"DELETE";
@@ -6260,8 +6085,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidDeleteAllTrashes:)];
     NSMutableDictionary *userInfo =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:rootId, BANMAYUN_ROOT_ID_KEY, [self accessToken],
-                                                              BANMAYUN_ACCESS_TOKEN_KEY, nil];
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:rootId, @"rootId", [self accessToken], @"token", nil];
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -6290,8 +6114,7 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params =
-            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", nil];
 
     if (toPath) {
         [params setObject:toPath forKey:@"to_path"];
@@ -6305,13 +6128,11 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
                                                  andInformTarget:self
                                                         selector:@selector(requestDidRestoreTrash:)];
     NSMutableDictionary *userInfo = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:rootId, BANMAYUN_ROOT_ID_KEY, trashId, BANMAYUN_TRASH_ID_KEY,
-                                         [self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+            dictionaryWithObjectsAndKeys:rootId, @"rootId", trashId, @"trashId", [self accessToken], @"token", nil];
 
     if (toPath) {
-        [userInfo setObject:toPath forKey:@"to_path"];
+        [userInfo setObject:toPath forKey:@"toPath"];
     }
-
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -6362,15 +6183,15 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:query, @"query", [self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:query, @"query", [self accessToken], @"token", nil];
 
     if (groupId) {
-        [params setObject:groupId forKey:BANMAYUN_GROUP_ID_KEY];
+        [params setObject:groupId forKey:@"group_id"];
     }
 
     if (offset) {
-        [params setObject:offset forKey:BANMAYUN_LIST_OFFSET_KEY];
+        [params setObject:offset forKey:@"offset"];
     }
 
     if (limit) {
@@ -6383,15 +6204,15 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidSearchUsers:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:query, @"query", [self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *userInfo =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:query, @"query", [self accessToken], @"token", nil];
 
     if (groupId) {
-        [userInfo setObject:groupId forKey:BANMAYUN_GROUP_ID_KEY];
+        [userInfo setObject:groupId forKey:@"groupId"];
     }
 
     if (offset) {
-        [userInfo setObject:offset forKey:BANMAYUN_LIST_OFFSET_KEY];
+        [userInfo setObject:offset forKey:@"offset"];
     }
 
     if (limit) {
@@ -6457,15 +6278,15 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:query, @"query", [self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:query, @"query", [self accessToken], @"token", nil];
 
     if (aUserId) {
-        [params setObject:aUserId forKey:BANMAYUN_USER_ID_KEY];
+        [params setObject:aUserId forKey:@"user_id"];
     }
 
     if (offset) {
-        [params setObject:offset forKey:BANMAYUN_LIST_OFFSET_KEY];
+        [params setObject:offset forKey:@"offset"];
     }
 
     if (limit) {
@@ -6478,15 +6299,15 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidSearchGroups:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:query, @"query", [self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *userInfo =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:query, @"query", [self accessToken], @"token", nil];
 
     if (aUserId) {
-        [userInfo setObject:aUserId forKey:BANMAYUN_USER_ID_KEY];
+        [userInfo setObject:aUserId forKey:@"userId"];
     }
 
     if (offset) {
-        [userInfo setObject:offset forKey:BANMAYUN_LIST_OFFSET_KEY];
+        [userInfo setObject:offset forKey:@"offset"];
     }
 
     if (limit) {
@@ -6556,19 +6377,19 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:query, @"query", [self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *params =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:query, @"query", [self accessToken], @"token", nil];
 
     if (rootId) {
-        [params setObject:rootId forKey:BANMAYUN_ROOT_ID_KEY];
+        [params setObject:rootId forKey:@"root_id"];
     }
 
     if (path) {
-        [params setObject:path forKey:BANMAYUN_FILE_PATH_KEY];
+        [params setObject:path forKey:@"path"];
     }
 
     if (offset) {
-        [params setObject:offset forKey:BANMAYUN_LIST_OFFSET_KEY];
+        [params setObject:offset forKey:@"offset"];
     }
 
     if (limit) {
@@ -6581,19 +6402,19 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidSearchFiles:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:query, @"query", [self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
+    NSMutableDictionary *userInfo =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:query, @"query", [self accessToken], @"token", nil];
 
     if (rootId) {
-        [userInfo setObject:rootId forKey:BANMAYUN_ROOT_ID_KEY];
+        [userInfo setObject:rootId forKey:@"rootId"];
     }
 
     if (path) {
-        [userInfo setObject:path forKey:BANMAYUN_FILE_PATH_KEY];
+        [userInfo setObject:path forKey:@"path"];
     }
 
     if (offset) {
-        [userInfo setObject:offset forKey:BANMAYUN_LIST_OFFSET_KEY];
+        [userInfo setObject:offset forKey:@"offset"];
     }
 
     if (limit) {
@@ -6659,15 +6480,18 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:orderBy, @"order_by", [self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
-
+    NSMutableDictionary *params =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:orderBy, @"order_by", [self accessToken], @"token", nil];
+    NSMutableDictionary *userInfo =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", orderBy, @"orderBy", nil];
     if (offset) {
-        [params setObject:offset forKey:BANMAYUN_LIST_OFFSET_KEY];
+        [params setObject:offset forKey:@"offset"];
+        [userInfo setObject:offset forKey:@"offset"];
     }
 
     if (limit) {
         [params setObject:limit forKey:@"limit"];
+        [userInfo setObject:limit forKey:@"limit"];
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/top/users"];
@@ -6676,12 +6500,6 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidTopUsers:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-
-    if (params) {
-        [userInfo addEntriesFromDictionary:params];
-    }
-
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -6737,15 +6555,18 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:orderBy, @"order_by", [self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
-
+    NSMutableDictionary *params =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:orderBy, @"order_by", [self accessToken], @"token", nil];
+    NSMutableDictionary *userInfo =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", orderBy, @"orderBy", nil];
     if (offset) {
-        [params setObject:offset forKey:BANMAYUN_LIST_OFFSET_KEY];
+        [params setObject:offset forKey:@"offset"];
+        [userInfo setObject:offset forKey:@"offset"];
     }
 
     if (limit) {
         [params setObject:limit forKey:@"limit"];
+        [userInfo setObject:limit forKey:@"limit"];
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/top/groups"];
@@ -6754,12 +6575,6 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidTopGroups:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-
-    if (params) {
-        [userInfo addEntriesFromDictionary:params];
-    }
-
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -6815,19 +6630,23 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
         return;
     }
 
-    NSMutableDictionary *params = [NSMutableDictionary
-            dictionaryWithObjectsAndKeys:orderBy, @"order_by", [self accessToken], BANMAYUN_ACCESS_TOKEN_KEY, nil];
-
+    NSMutableDictionary *params =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:orderBy, @"order_by", [self accessToken], @"token", nil];
+    NSMutableDictionary *userInfo =
+            [NSMutableDictionary dictionaryWithObjectsAndKeys:[self accessToken], @"token", orderBy, @"orderBy", nil];
     if (rootId) {
-        [params setObject:rootId forKey:BANMAYUN_ROOT_ID_KEY];
+        [params setObject:rootId forKey:@"root_id"];
+        [userInfo setObject:rootId forKey:@"rootId"];
     }
 
     if (offset) {
-        [params setObject:offset forKey:BANMAYUN_LIST_OFFSET_KEY];
+        [params setObject:offset forKey:@"offset"];
+        [userInfo setObject:offset forKey:@"offset"];
     }
 
     if (limit) {
         [params setObject:limit forKey:@"limit"];
+        [userInfo setObject:limit forKey:@"limit"];
     }
 
     NSString *fullPath = [NSString stringWithFormat:@"/top/files"];
@@ -6836,12 +6655,6 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
     BMYRequest *request = [[BMYRequest alloc] initWithURLRequest:urlRequest
                                                  andInformTarget:self
                                                         selector:@selector(requestDidTopFiles:)];
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-
-    if (params) {
-        [userInfo addEntriesFromDictionary:params];
-    }
-
     request.userInfo = userInfo;
     [requests addObject:request];
 }
@@ -6915,6 +6728,19 @@ NSInteger kBMYBanmayunUploadChunkSize = 1024 * 1024;
 
     if (theRoot) {
         [self performSelector:aSuccSelector onThread:thread withObject:theRoot waitUntilDone:NO];
+    } else {
+        [self performSelector:aFailSelector onThread:thread withObject:request waitUntilDone:NO];
+    }
+}
+
+- (void)parseUserGroupObject:(BMYRequest *)request
+                resultThread:(NSThread *)thread
+                succSelector:(SEL)aSeccSelector
+                failSelector:(SEL)aFailSelector {
+    NSDictionary *resultDic = (NSDictionary *)[request resultJson];
+
+    if (resultDic) {
+        [self performSelector:aSeccSelector onThread:thread withObject:resultDic waitUntilDone:NO];
     } else {
         [self performSelector:aFailSelector onThread:thread withObject:request waitUntilDone:NO];
     }
