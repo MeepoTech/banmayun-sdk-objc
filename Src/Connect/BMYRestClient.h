@@ -292,7 +292,7 @@
                           bytes:(NSNumber *)bytes
                          toPath:(NSString *)toPath;
 
-- (void)getFileBypathWithRootId:(NSString *)rootId path:(NSString *)path toPath:(NSString *)toPath;
+- (void)getFileByPathWithRootId:(NSString *)rootId path:(NSString *)path toPath:(NSString *)toPath;
 
 // Trash File By Path
 - (void)trashFileByPathWithRootId:(NSString *)rootId path:(NSString *)path;
